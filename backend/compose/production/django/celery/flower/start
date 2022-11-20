@@ -1,0 +1,35 @@
+#!/bin/bash
+
+#set -o errexit
+#set -o nounset
+#
+#worker_ready() {
+#    celery -A config.celery_app inspect ping
+#}
+#
+#until worker_ready; do
+#  >&2 echo 'Celery workers not available'
+#  sleep 1
+#done
+#>&2 echo 'Celery workers is available'
+#
+#celery -A config.celery_app  \
+#    --broker="redis://redis:6379/0" \
+#    flower --basic_auth=${FLOWER_USER}:${FLOWER_PASS}
+
+set -o errexit
+set -o nounset
+
+worker_ready() {
+    celery -A config.celery_app inspect ping
+}
+
+until worker_ready; do
+  >&2 echo 'Celery workers not available'
+  sleep 1
+done
+>&2 echo 'Celery workers is available'
+
+celery -A config.celery_app  \
+    --broker="redis://redis:6379/0" \
+    flower --basic_auth=${FLOWER_USER}:${FLOWER_PASS}

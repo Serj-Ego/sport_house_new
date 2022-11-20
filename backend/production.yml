@@ -1,0 +1,14 @@
+version: "3.7"
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
+    image: mkovalevhse/sport_house_api_nginx
+
+  django:
+    build:
+      context: .
+      dockerfile: ./compose/production/django/Dockerfile
+    image: mkovalevhse/sport_house_api_django
