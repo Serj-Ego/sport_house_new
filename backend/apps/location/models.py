@@ -1,6 +1,14 @@
+from django.contrib.auth.models import Permission
 from django.db import models
 
-from apps.base.models import File, Status
+from apps.base.models import (
+    File,
+    Status,
+    LocationLight,
+    LocationCoating,
+    LocationCategory,
+    LocationSportType,
+)
 
 
 # Create your models here.
@@ -53,78 +61,169 @@ class WorkTimeLocation(models.Model):
         verbose_name_plural = "Время работы спортивной площадки"
 
 
-class LocationStatus(models.Model):
-    """Статус площадки"""
+class LocationOptions(models.Model):
+    """Опции спортивной площадки (Создаются автоматически с фронта)"""
 
-    status = models.ForeignKey(Status, verbose_name="Статус", on_delete=models.CASCADE)
+    name = models.CharField("Наименование", max_length=255)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Опция спортивной площадки (Создается автоматически с фронта)"
+        verbose_name_plural = (
+            "Опции спортивной площадки (Создаются автоматически с фронта)"
+        )
+
+
+class LocationKeyWords(models.Model):
+    """Ключевые слова спортивной площадки (Создаются автоматически с фронта)"""
+
+    name = models.CharField("Ключевое слово", max_length=255)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = (
+            "Ключевое слово спортивной площадки (Создается автоматически с фронта)"
+        )
+        verbose_name_plural = (
+            "Ключевые слова спортивной площадки (Создаются автоматически с фронта)"
+        )
+
+
+class ListLocationStatus(models.Model):
+    """Статусы спортивной площадки"""
+
     created_date = models.DateTimeField("Дата создания", auto_now=True)
     commentary = models.TextField("Комментарий", null=True, blank=True)
     user = models.ForeignKey(
-        "user.User", on_delete=models.CASCADE, verbose_name="Пользователь"
+        "user.User", on_delete=models.PROTECT, verbose_name="Пользователь"
+    )
+    status = models.ForeignKey(Status, on_delete=models.PROTECT, verbose_name="Статус")
+    location = models.ForeignKey(
+        "Location",
+        on_delete=models.CASCADE,
+        related_name="listlocationstatus",
+        verbose_name="Спортивная площадка",
     )
 
-    def __str__(self):
-        return self.status.name
+    class Meta:
+        verbose_name = "Статус спортивной площадки"
+        verbose_name_plural = "Статусы спортивной площадки"
+
+
+class ListManagerLocation(models.Model):
+    """Менеджеры спортивной площадки"""
+
+    created_date = models.DateTimeField("Дата создания", auto_now=True)
+    user = models.ForeignKey(
+        "user.User",
+        on_delete=models.CASCADE,
+        verbose_name="Пользователь",
+        related_name="user",
+    )
+    location = models.ForeignKey(
+        "Location",
+        on_delete=models.CASCADE,
+        related_name="listmanagerlocation",
+        verbose_name="Спортивная площадка",
+    )
+    root = models.ForeignKey(
+        Permission, on_delete=models.CASCADE, verbose_name="Права пользователя"
+    )
+    user_assigned = models.ForeignKey(
+        "user.User",
+        on_delete=models.PROTECT,
+        verbose_name="Пользователь назначивший права",
+        related_name="user_assigned",
+    )
 
     class Meta:
-        verbose_name = "Статус площадки"
-        verbose_name_plural = "Статус площадки"
+        verbose_name = "Менеджер спортивной площадки"
+        verbose_name_plural = "Менеджеры спортивной площадки"
 
 
-# class Location(models.Model):
-#     """Спортивные площадки"""
+# class EventCalendarLocation(models.Model):
+#     """Календарь мероприятий на спортивной площадке"""
 #
-#     images = models.ManyToManyField(File, verbose_name="Изображения площадки")
-#     name = models.CharField("Наименование", max_length=510, null=True, blank=True)
-#     description = models.TextField("Описание", null=True, blank=True)
-#     category = models.ManyToManyField(LocationCategory, verbose_name="Категорииб")
-#     sports = models.ManyToManyField(
-#         LocationSportType, verbose_name="Список категорий спорта на площадке"
+#     event_name = models.CharField("Название мероприятия", max_length=510)
+#     date = models.DateField("Дата проведения")
+#     start_event = models.TimeField("Время начала")
+#     end_event = models.TimeField("Время завершения")
+#     creator = models.ForeignKey(
+#         "user.User",
+#         on_delete=models.PROTECT,
+#         verbose_name="Пользователь",
 #     )
-#     confirmed_phone = models.CharField(
-#         "Номер телефона для подтверждения площадки",
-#         max_length=20,
-#         null=True,
-#         blank=True,
-#     )
-#     phone = models.CharField("Номер телефона", max_length=20, null=True, blank=True)
-#     additional_phone = models.CharField(
-#         "Доп. номер телефона", max_length=20, null=True, blank=True
-#     )
-#     email = models.EmailField("Электронный адрес площадки", null=True, blank=True)
-#     additional_email = models.EmailField(
-#         "Доп. электронный адрес площадки", null=True, blank=True
-#     )
-#     work_time = models.ManyToManyField(WorkTimeLocation, verbose_name="Время работы")
-#     address = models.ForeignKey(
-#         LocationAddress, on_delete=models.SET_NULL, null=True, blank=True
-#     )
-#     owner = models.ForeignKey(
-#         "user.User", on_delete=models.CASCADE, null=True, blank=True
-#     )
-#     created_date = models.DateTimeField("Дата создания", auto_now=True)
-#
-#     status_list = models.ManyToManyField(LocationStatus, verbose_name="Статусы локации")
-#
-#     def __str__(self):
-#         return self.name
-#
-#     @property
-#     def last_status(self):
-#         return self.status_list.all().order_by("-created_date").first().status
-#
-#     @property
-#     def last_status_commentary(self):
-#         return self.status_list.all().order_by("-created_date").first().commentary
-#
-#     def add_status(self, user, status_name, commentary=None):
-#         status = LocationStatus.objects.create(
-#             user=user,
-#             status=Status.objects.get(name=status_name),
-#             commentary=commentary,
-#         )
-#         self.status_list.add(status)
-#
-#     class Meta:
-#         verbose_name = "Спортивная площадка"
-#         verbose_name_plural = "Спортивные площадки"
+#     members = models.ManyToManyField("user.User", verbose_name="Участники")
+#     trainer = models.ManyToManyField("user.User", verbose_name="Тренеры")
+
+
+class Location(models.Model):
+    """Спортивные площадки"""
+
+    full_name = models.CharField("Полное наименование объекта", max_length=1020)
+    short_name = models.CharField(
+        "Сокращенное наименование объекта", max_length=510, null=True, blank=True
+    )
+    description = models.TextField("Описание")
+    images = models.ManyToManyField(File, verbose_name="Изображения площадки")
+    address = models.ForeignKey(
+        LocationAddress, on_delete=models.PROTECT, verbose_name="Адрес"
+    )
+    work_time = models.ManyToManyField(WorkTimeLocation, verbose_name="Время работы")
+    price = models.PositiveIntegerField("Стоимость (в час)", default=0)
+    length = models.PositiveIntegerField("Длина")
+    width = models.PositiveIntegerField("Ширина")
+    squad = models.PositiveIntegerField("Площадь")
+    lighting = models.ForeignKey(
+        LocationLight, verbose_name="Освещение", on_delete=models.PROTECT
+    )
+    coating = models.ForeignKey(
+        LocationCoating, verbose_name="Покрытие", on_delete=models.PROTECT
+    )
+    category = models.ForeignKey(
+        LocationCategory, verbose_name="Категория", on_delete=models.PROTECT
+    )
+    sport_type = models.ForeignKey(
+        LocationSportType, verbose_name="Вид спорта", on_delete=models.PROTECT
+    )
+    is_covered = models.BooleanField("Крытая площадка", default=False)
+    options = models.ManyToManyField(
+        LocationOptions, verbose_name="Опции спортивной площадки"
+    )
+    phone = models.CharField("Номер телефона", max_length=20)
+    additional_phone = models.CharField(
+        "Доп. номер телефона", max_length=20, null=True, blank=True
+    )
+    additional_phone_code = models.CharField(
+        "Доп. код для дополнительного номера", max_length=20, null=True, blank=True
+    )
+    email = models.EmailField("Электронный адрес площадки")
+    web_site = models.URLField("Веб сайт площадки", blank=True, null=True)
+    keywords = models.ManyToManyField(LocationKeyWords, verbose_name="Ключевые слова")
+    statuses = models.ManyToManyField(
+        Status,
+        through="ListLocationStatus",
+        through_fields=("location", "status"),
+        verbose_name="Cтатусы",
+    )
+    owner = models.ForeignKey(
+        "user.User",
+        on_delete=models.PROTECT,
+        verbose_name="Владелец спортивной площадки",
+    )
+    created_date = models.DateTimeField("Дата создания", auto_now=True)
+    managers = models.ManyToManyField(
+        "user.User",
+        through="ListManagerLocation",
+        through_fields=("location", "user"),
+        verbose_name="Менеджеры",
+        related_name="managers",
+    )
+
+    class Meta:
+        verbose_name = "Спортивная площадка"
+        verbose_name_plural = "Спортивные площадки"

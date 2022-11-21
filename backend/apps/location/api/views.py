@@ -1,31 +1,4 @@
 # Create your views here.
-from rest_framework.generics import ListAPIView
-from rest_framework.permissions import IsAuthenticated
-
-from apps.base.models import LocationCategory, LocationSportType
-from apps.location.api.serializers import (
-    LocationSportTypeSerializer,
-    LocationCategorySerializer,
-)
-
-
-class LocationCategoryListAPIView(ListAPIView):
-    """Отдает список категорий площадки"""
-
-    pagination_class = None
-    permission_classes = (IsAuthenticated,)
-    queryset = LocationCategory.objects.all()
-    serializer_class = LocationCategorySerializer
-
-
-class LocationSportTypeListAPIView(ListAPIView):
-    """Отдает список категорий спорта"""
-
-    pagination_class = None
-    permission_classes = (IsAuthenticated,)
-    queryset = LocationSportType.objects.all()
-    serializer_class = LocationSportTypeSerializer
-
 
 # class LocationCreateAPIView(APIView):
 #     """Создание новой спортивной площадки"""

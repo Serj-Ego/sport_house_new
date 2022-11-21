@@ -1,33 +1,15 @@
 from rest_framework import serializers
 
-from rest_framework import serializers
-
-from apps.base.models import LocationCategory, LocationSportType
+from apps.base.models import LocationCategory
 from apps.location.models import (
     LocationAddress,
 )
+from rest_framework import serializers
 
-
-class LocationCategorySerializer(serializers.ModelSerializer):
-    """Сериализатор категории площадок"""
-
-    class Meta:
-        model = LocationCategory
-        fields = (
-            "id",
-            "name",
-        )
-
-
-class LocationSportTypeSerializer(serializers.ModelSerializer):
-    """Сериализатор категории спорта на локации"""
-
-    class Meta:
-        model = LocationSportType
-        fields = (
-            "id",
-            "name",
-        )
+from apps.base.models import LocationCategory
+from apps.location.models import (
+    LocationAddress,
+)
 
 
 class LocationAddressSerializer(serializers.ModelSerializer):

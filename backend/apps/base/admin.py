@@ -14,6 +14,9 @@ from apps.base.models import (
     DinnerEatType,
     LocationCategory,
     LocationSportType,
+    LocationLight,
+    LocationCoating,
+    EventLocationType,
 )
 
 
@@ -117,5 +120,23 @@ class LocationCategoryAdmin(admin.ModelAdmin):
 
 @admin.register(LocationSportType)
 class LocationSportTypeAdmin(admin.ModelAdmin):
+    list_display = ["name"]
+    search_fields = ("name",)
+
+
+@admin.register(LocationLight)
+class LocationLightAdmin(admin.ModelAdmin):
+    list_display = ["name"]
+    search_fields = ("name",)
+
+
+@admin.register(LocationCoating)
+class LocationCoatingAdmin(admin.ModelAdmin):
+    list_display = ["name"]
+    search_fields = ("name",)
+
+
+@admin.register(EventLocationType)
+class EventLocationTypeAdmin(admin.ModelAdmin):
     list_display = ["name"]
     search_fields = ("name",)

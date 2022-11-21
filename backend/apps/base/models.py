@@ -214,7 +214,7 @@ class LocationCategory(models.Model):
 
 
 class LocationSportType(models.Model):
-    """Категории спорта на локации"""
+    """Категории спорта на спортивной площадке"""
 
     name = models.CharField("Наименование", max_length=255)
 
@@ -222,5 +222,44 @@ class LocationSportType(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = "(Справочник) Категория спорта на локации"
-        verbose_name_plural = "(Справочник) Категории спорта на локации"
+        verbose_name = "(Справочник) Категория спорта на спортивной площадке"
+        verbose_name_plural = "(Справочник) Категории спорта спортивных площадок"
+
+
+class LocationLight(models.Model):
+    """Виды освещения на спортивной площадке"""
+
+    name = models.CharField("Наименование", max_length=255)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "(Справочник) Вид освещения на спортивной площадке"
+        verbose_name_plural = "(Справочник) Виды освещения на спортивных площадках"
+
+
+class LocationCoating(models.Model):
+    """Виды покрытия на спортивной площадке"""
+
+    name = models.CharField("Наименование", max_length=255)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "(Справочник) Вид покрытия на спортивной площадке"
+        verbose_name_plural = "(Справочник) Виды покрытия на спортивных площадках"
+
+
+class EventLocationType(models.Model):
+    """Виды мероприятий на спортивной площадке"""
+
+    name = models.CharField("Наименование", max_length=255)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "(Справочник) Вид мероприятия на спортивной площадке"
+        verbose_name_plural = "(Справочник) Виды мероприятий на спортивной площадке"
