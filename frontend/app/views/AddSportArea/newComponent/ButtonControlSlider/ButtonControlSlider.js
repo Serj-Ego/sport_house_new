@@ -3,6 +3,7 @@ import React from "react";
 import Next from "./Next";
 import Back from "./Back";
 import DotSliderControl from "./DotSliderControl";
+import Send from "./Send";
 
 export default function ButtonControlSlider({
   refSlider,
@@ -22,13 +23,22 @@ export default function ButtonControlSlider({
         currentSlideIndex={currentSlideIndex}
         refSlider={refSlider}
       />
-      <DotSliderControl indexCount={sliders} activeIndex={currentSlideIndex} />
-      <Next
+      <DotSliderControl
+        indexCount={sliders}
+        activeIndex={currentSlideIndex}
         setCurrentSlideIndex={setCurrentSlideIndex}
-        currentSlideIndex={currentSlideIndex}
         refSlider={refSlider}
-        indexCount={sliders.length}
       />
+      {sliders.length - 1 === currentSlideIndex ? (
+        <Send />
+      ) : (
+        <Next
+          setCurrentSlideIndex={setCurrentSlideIndex}
+          currentSlideIndex={currentSlideIndex}
+          refSlider={refSlider}
+          indexCount={sliders.length}
+        />
+      )}
     </HStack>
   );
 }

@@ -43,9 +43,6 @@ export default function Back({
       >
         <HStack space={2}>
           <Entypo name="chevron-left" size={24} color="white" />
-          {/*<Text color={"white"} fontSize={18}>*/}
-          {/*  Назад*/}
-          {/*</Text>*/}
         </HStack>
       </LinearGradient>
     </TouchableOpacity>
