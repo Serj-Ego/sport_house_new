@@ -198,3 +198,29 @@ class Status(models.Model):
     class Meta:
         verbose_name = "(Справочник) Статус"
         verbose_name_plural = "(Справочник) Статусы"
+
+
+class LocationCategory(models.Model):
+    """Категории площадок"""
+
+    name = models.CharField("Наименование", max_length=255)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "(Справочник) Категория спортивной площадки"
+        verbose_name_plural = "(Справочник) Категории спортивных площадок"
+
+
+class LocationSportType(models.Model):
+    """Категории спорта на локации"""
+
+    name = models.CharField("Наименование", max_length=255)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "(Справочник) Категория спорта на локации"
+        verbose_name_plural = "(Справочник) Категории спорта на локации"

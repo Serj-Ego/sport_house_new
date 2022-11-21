@@ -12,6 +12,8 @@ from apps.base.models import (
     BreakfastEatType,
     LunchEatType,
     DinnerEatType,
+    LocationCategory,
+    LocationSportType,
 )
 
 
@@ -104,4 +106,16 @@ class StatusAdmin(admin.ModelAdmin):
     list_display = [
         "name",
     ]
+    search_fields = ("name",)
+
+
+@admin.register(LocationCategory)
+class LocationCategoryAdmin(admin.ModelAdmin):
+    list_display = ["name"]
+    search_fields = ("name",)
+
+
+@admin.register(LocationSportType)
+class LocationSportTypeAdmin(admin.ModelAdmin):
+    list_display = ["name"]
     search_fields = ("name",)
