@@ -15,6 +15,7 @@ import AddSportArea from "../../views/AddSportArea";
 import { MAP_ROUTE } from "../../modules/NavigationRoutes/map";
 import EnrollLocation from "../../views/EnrollLocation";
 import SelectAddressMap from "../../views/SelectAddressMap";
+import CheckDataView from "../../views/AddSportArea/CheckDataView";
 
 export const addSportAreaContext = createContext();
 
@@ -35,7 +36,7 @@ export default function AdditionalStackNavigator() {
     { week: "Суббота", startWork: null, endWork: null },
     { week: "Воскресенье", startWork: null, endWork: null },
   ]);
-  const [price, setPrice] = useState(0);
+  const [price, setPrice] = useState(null);
   const [length, setLength] = useState(0);
   const [width, setWidth] = useState(0);
   const [squad, setSquad] = useState(0);
@@ -181,6 +182,32 @@ export default function AdditionalStackNavigator() {
             presentation: "modal",
             title: PROFILE_ROUTE.SELECT_SPORT_AREA_ADDRESS.title,
             headerBackTitle: "Отмена",
+            headerTitleStyle: {
+              color:
+                colorScheme === "light"
+                  ? COLORS_LIGHT_THEME.TEXT
+                  : COLORS_DARK_THEME.TEXT,
+            },
+            headerStyle: {
+              backgroundColor:
+                colorScheme === "light"
+                  ? COLORS_LIGHT_THEME.BACKGROUND
+                  : COLORS_DARK_THEME.BACKGROUND,
+            },
+          }}
+        />
+        <Index.Screen
+          name={PROFILE_ROUTE.SPORT_AREA_CHECK_DATA.route}
+          component={CheckDataView}
+          initialParams={{
+            header: PROFILE_ROUTE.SPORT_AREA_CHECK_DATA.title,
+          }}
+          options={{
+            headerShown: false,
+            presentation: "modal",
+            gestureEnabled: false,
+            headerBackTitle: "",
+            title: PROFILE_ROUTE.SPORT_AREA_CHECK_DATA.title,
             headerTitleStyle: {
               color:
                 colorScheme === "light"

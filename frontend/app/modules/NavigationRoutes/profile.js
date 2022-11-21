@@ -17,8 +17,8 @@ export const PROFILE_ROUTE = {
     route: "select_sport_area_address",
     title: "Адрес площадки",
   },
-  SPORT_AREA_ZONE_ADD: {
-    route: "add_sport_zone",
-    title: "Добавить зону",
+  SPORT_AREA_CHECK_DATA: {
+    route: "sport_area_check_data",
+    title: "Проверка введенных данных",
   },
 };
