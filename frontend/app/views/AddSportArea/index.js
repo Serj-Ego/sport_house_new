@@ -1,21 +1,21 @@
 import DefaultBackground from "../../components/DefaultBackground";
 import { FlatList, KeyboardAvoidingView, SafeAreaView } from "react-native";
 import React, { useRef, useState } from "react";
-import ButtonControlSlider from "./newComponent/ButtonControlSlider/ButtonControlSlider";
+import ButtonControlSlider from "./components/ButtonControlSlider/ButtonControlSlider";
 import { WIDTH } from "../../modules/Theme/dimensions";
-import SportAreaName from "./newComponent/SportAreaName";
-import SportAreaPhoto from "./newComponent/SportAreaPhoto";
-import SportAreaAddress from "./newComponent/SportAreaAddress";
-import SportAreaWorkTime from "./newComponent/SportAreaWorkTime";
-import SportAreaPrice from "./newComponent/SportAreaPrice";
-import SportAreaSquad from "./newComponent/SportAreaSquad";
-import SportAreaFlatLight from "./newComponent/SportAreaFlatLight";
-import SportAreaCategory from "./newComponent/SportAreaCategory";
-import SportAreaSportType from "./newComponent/SportAreaSportType";
-import SportAreaCovered from "./newComponent/SportAreaCovered";
-import SportAreaOptions from "./newComponent/SportAreaOptions";
-import SportAreaContacts from "./newComponent/SportAreaContacts";
-import SportAreaKeyWords from "./newComponent/SportAreaKeyWords";
+import SportAreaName from "./components/SportAreaName";
+import SportAreaPhoto from "./components/SportAreaPhoto";
+import SportAreaAddress from "./components/SportAreaAddress";
+import SportAreaWorkTime from "./components/SportAreaWorkTime";
+import SportAreaPrice from "./components/SportAreaPrice";
+import SportAreaSquad from "./components/SportAreaSquad";
+import SportAreaFlatLight from "./components/SportAreaFlatLight";
+import SportAreaCategory from "./components/SportAreaCategory";
+import SportAreaSportType from "./components/SportAreaSportType";
+import SportAreaCovered from "./components/SportAreaCovered";
+import SportAreaOptions from "./components/SportAreaOptions";
+import SportAreaContacts from "./components/SportAreaContacts";
+import SportAreaKeyWords from "./components/SportAreaKeyWords";
 
 export default function AddSportArea() {
   const refSlider = useRef(null);
