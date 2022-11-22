@@ -1,4 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import api from "../../api/api";
 
 let initialState = {
   completeOnboarding: false,
@@ -7,6 +8,21 @@ let initialState = {
     longitude: 37.619055,
   },
 };
+
+/**
+ * Получить список объектов из справочника по типу.
+ */
+export const BaseDirectoryApiRequest = createAsyncThunk(
+  "base/BaseDirectoryApiRequest",
+  async (typeDirectory, { rejectWithValue }) => {
+    const response = await api.get(`base/directory/${typeDirectory}`);
+    const dataResponse = await response.json();
+    if (!response.ok) {
+      return rejectWithValue(dataResponse);
+    }
+    return dataResponse;
+  }
+);
 
 const baseSlice = createSlice({
   name: "base",

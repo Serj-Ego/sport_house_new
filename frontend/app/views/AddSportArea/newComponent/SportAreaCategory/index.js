@@ -4,7 +4,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { addSportAreaContext } from "../../../../navigation/AdditionalStack";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { SportAreaTypesApiRequest } from "../../../../services/redux/slices/sportAreaSlice";
 import {
   ActionSheetIOS,
   TouchableWithoutFeedback,
@@ -17,6 +16,8 @@ import {
 } from "../../../../modules/Theme/colors";
 import { Spacer } from "native-base/src/components/primitives/Flex";
 import { Octicons } from "@expo/vector-icons";
+import { BaseDirectoryApiRequest } from "../../../../services/redux/slices/baseSlice";
+import { DirectoryTypeConst } from "../../../../modules/DirectoryTypeConst";
 
 export default function SportAreaCategory() {
   const dispatch = useDispatch();
@@ -24,7 +25,7 @@ export default function SportAreaCategory() {
   const { category, setCategory } = useContext(addSportAreaContext);
   const [categoryList, setCategoryList] = useState([]);
   useEffect(() => {
-    dispatch(SportAreaTypesApiRequest())
+    dispatch(BaseDirectoryApiRequest(DirectoryTypeConst.LOCATION_CATEGORY_TYPE))
       .then(unwrapResult)
       .then((res) => {
         let data = ["Отменить"];

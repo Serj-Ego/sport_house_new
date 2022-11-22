@@ -5,7 +5,7 @@ import {
   useColorScheme,
 } from "react-native";
 import { HEIGHT, WIDTH } from "../../../../modules/Theme/dimensions";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Octicons } from "@expo/vector-icons";
 import {
   COLORS_DARK_THEME,
@@ -14,40 +14,42 @@ import {
 } from "../../../../modules/Theme/colors";
 import { Spacer } from "native-base/src/components/primitives/Flex";
 import { addSportAreaContext } from "../../../../navigation/AdditionalStack";
+import { BaseDirectoryApiRequest } from "../../../../services/redux/slices/baseSlice";
+import { DirectoryTypeConst } from "../../../../modules/DirectoryTypeConst";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { useDispatch } from "react-redux";
 
-const ActionSheetOptionLighting = [
-  "Отменить",
-  "Без дополнительного освещения",
-  "Освещение газоразрядными лампами",
-  "Освещение лампами накаливания",
-  "Освещение светодиодными лампами",
-  "Смешанное освещение",
-];
-const ActionSheetOptionCoating = [
-  "Отменить",
-  "Асфальтовое, бетонное покрытие",
-  "Газонное покрытие (искусственное)",
-  "Газонное покрытие (натуральное)",
-  "Грунтовое покрытие",
-  "Деревянное покрытие",
-  "Заливное покрытие",
-  "Искусственный лед",
-  "Искусственный снег",
-  "Натуральный лед",
-  "Натуральный снег",
-  "Отсыпное покрытие",
-  "Рулонное покрытие",
-  "Синтетический лед",
-  "Специальное покрытие",
-];
 export default function SportAreaFlatLight() {
   const { lighting, coating, setLighting, setCoating } =
     useContext(addSportAreaContext);
+  const dispatch = useDispatch();
   const colorScheme = useColorScheme();
+  const [lightingList, setLightingList] = useState([]);
+  const [coatingList, setCoatingList] = useState([]);
+  useEffect(() => {
+    dispatch(BaseDirectoryApiRequest(DirectoryTypeConst.LOCATION_LIGHTING_TYPE))
+      .then(unwrapResult)
+      .then((res) => {
+        let data = ["Отменить"];
+        res.map((value) => {
+          data = [...data, value.name];
+        });
+        setLightingList(data);
+      });
+    dispatch(BaseDirectoryApiRequest(DirectoryTypeConst.LOCATION_COATING_TYPE))
+      .then(unwrapResult)
+      .then((res) => {
+        let data = ["Отменить"];
+        res.map((value) => {
+          data = [...data, value.name];
+        });
+        setCoatingList(data);
+      });
+  }, []);
   const onPressLight = () => {
     ActionSheetIOS.showActionSheetWithOptions(
       {
-        options: ActionSheetOptionLighting,
+        options: lightingList,
         cancelButtonIndex: 0,
         userInterfaceStyle: colorScheme,
       },
@@ -55,7 +57,7 @@ export default function SportAreaFlatLight() {
         if (buttonIndex === 0) {
           setLighting("");
         } else {
-          setLighting(ActionSheetOptionLighting[buttonIndex]);
+          setLighting(lightingList[buttonIndex]);
         }
       }
     );
@@ -63,7 +65,7 @@ export default function SportAreaFlatLight() {
   const onPressCoating = () => {
     ActionSheetIOS.showActionSheetWithOptions(
       {
-        options: ActionSheetOptionCoating,
+        options: coatingList,
         cancelButtonIndex: 0,
         userInterfaceStyle: colorScheme,
       },
@@ -71,7 +73,7 @@ export default function SportAreaFlatLight() {
         if (buttonIndex === 0) {
           setCoating("");
         } else {
-          setCoating(ActionSheetOptionCoating[buttonIndex]);
+          setCoating(coatingList[buttonIndex]);
         }
       }
     );

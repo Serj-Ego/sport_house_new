@@ -3,43 +3,10 @@ import api from "../../api/api";
 import { Platform } from "react-native";
 
 let initialState = {
-  sportAreaTypesList: [],
-  sportAreaSportTypesList: [],
-
   sportAreaOwnerList: [],
   updatedStatusSportArea: {},
   sportAreaUserList: [],
 };
-
-/**
- * Получить список типов спортивных площадок.
- */
-export const SportAreaTypesApiRequest = createAsyncThunk(
-  "sportArea/SportAreaTypesApiRequest",
-  async (_, { rejectWithValue }) => {
-    const response = await api.get(`location/category/`);
-    const dataResponse = await response.json();
-    if (!response.ok) {
-      return rejectWithValue(dataResponse);
-    }
-    return dataResponse;
-  }
-);
-
-/**
- * Получить список видов спорта спортивных площадок.
- */
-export const SportAreaSportTypesApiRequest = createAsyncThunk(
-  "sportArea/SportAreaSportTypesApiRequest",
-  async (_, { rejectWithValue }) => {
-    const response = await api.get(`location/sport/type/`);
-    const dataResponse = await response.json();
-    if (!response.ok) {
-      return rejectWithValue(dataResponse);
-    }
-    return dataResponse;
-  }
-);
 
 /**
  * Создание спортивной площадки.
@@ -125,19 +92,6 @@ const baseSlice = createSlice({
   reducers: {},
   extraReducers: {
     /**
-     * Получить список типо спортивных площадок.
-     */
-    [SportAreaTypesApiRequest.fulfilled]: (state, action) => {
-      state.sportAreaTypesList = action.payload;
-    },
-    /**
-     * Получить список видов спорта спортивных площадок.
-     */
-    [SportAreaSportTypesApiRequest.fulfilled]: (state, action) => {
-      state.sportAreaSportTypesList = action.payload;
-    },
-
-    /**
      * Получить список спортивных площадок у менеджера.
      */
     [SportAreaOwnerListApiRequest.fulfilled]: (state, action) => {
@@ -160,10 +114,6 @@ const baseSlice = createSlice({
   },
 });
 export default baseSlice.reducer;
-
-export const sportAreaTypesList = (state) => state.sportArea.sportAreaTypesList;
-export const sportAreaSportTypesList = (state) =>
-  state.sportArea.sportAreaSportTypesList;
 
 export const sportAreaOwnerList = (state) => state.sportArea.sportAreaOwnerList;
 
