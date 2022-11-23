@@ -1,14 +1,21 @@
 from rest_framework import serializers
 
-from apps.base.models import LocationCategory
-from apps.location.models import (
-    LocationAddress,
+from apps.base.models import (
+    LocationLight,
+    LocationCoating,
+    LocationCategory,
+    LocationSportType,
+    File,
+    FileType,
+    FileTypeConst,
+    StatusConst,
 )
-from rest_framework import serializers
-
-from apps.base.models import LocationCategory
 from apps.location.models import (
     LocationAddress,
+    Location,
+    WorkTimeLocation,
+    LocationOptions,
+    LocationKeyWords,
 )
 
 
@@ -39,6 +46,98 @@ class LocationAddressSerializer(serializers.ModelSerializer):
             "administrativeArea",
             "subAdministrativeArea",
             "countryCode",
+        )
+
+
+class LocationCreateSerializer(serializers.ModelSerializer):
+    """Сериализатор спортивных площадок"""
+
+    images = serializers.ListField()
+    address = LocationAddressSerializer()
+    work_time = serializers.ListField()
+    lighting = serializers.CharField()
+    coating = serializers.CharField()
+    category = serializers.CharField()
+    sport_type = serializers.CharField()
+    options = serializers.ListField()
+    keywords = serializers.ListField()
+
+    def create(self, validated_data):
+        images = validated_data.pop("images", None)
+        work_time = validated_data.pop("work_time", None)
+        options = validated_data.pop("options", None)
+        keywords = validated_data.pop("keywords", None)
+
+        validated_data["address"] = LocationAddress.objects.create(
+            **validated_data.pop("address", None)
+        )
+        validated_data["lighting"] = LocationLight.objects.get(
+            name=validated_data.pop("lighting", None)
+        )
+        validated_data["coating"] = LocationCoating.objects.get(
+            name=validated_data.pop("coating", None)
+        )
+        validated_data["category"] = LocationCategory.objects.get(
+            name=validated_data.pop("category", None)
+        )
+        validated_data["sport_type"] = LocationSportType.objects.get(
+            name=validated_data.pop("sport_type", None)
+        )
+        validated_data["owner"] = self.context.get("user")
+        location: Location = super().create(validated_data)
+
+        for image in images:
+            file = File.objects.create(
+                path=image,
+                name=image.name,
+                file_type=FileType.objects.get(name=FileTypeConst.LOCATION_IMAGE),
+            )
+            location.images.add(file)
+
+        for week in work_time:
+            week, _ = WorkTimeLocation.objects.get_or_create(
+                week_name=week.get("week"),
+                start_date=week.get("startWork"),
+                end_date=week.get("endWork"),
+            )
+            location.work_time.add(week)
+
+        for option in options:
+            opt, _ = LocationOptions.objects.get_or_create(name=option)
+            location.options.add(opt)
+
+        for keyword in keywords:
+            kw, _ = LocationKeyWords.objects.get_or_create(name=keyword)
+            location.keywords.add(kw)
+
+        location.add_status(self.context.get("user"), StatusConst.CREATED)
+        return location
+
+    class Meta:
+        model = Location
+        fields = (
+            "full_name",
+            "short_name",
+            "description",
+            "images",
+            "address",
+            "work_time",
+            "price",
+            "length",
+            "width",
+            "squad",
+            "lighting",
+            "coating",
+            "category",
+            "sport_type",
+            "is_covered",
+            "options",
+            "phone",
+            "additional_phone",
+            "additional_phone_code",
+            "email",
+            "web_site",
+            "keywords",
         )
 
 
@@ -175,17 +274,6 @@ class LocationAddressSerializer(serializers.ModelSerializer):
 #             "images",
 #             "last_status",
 #         )
-
-
-class CategoryLocationSerializer(serializers.ModelSerializer):
-    """"""
-
-    class Meta:
-        model = LocationCategory
-        fields = (
-            "name",
-            "id",
-        )
 
 
 # class LocationForUserSerializer(serializers.ModelSerializer):

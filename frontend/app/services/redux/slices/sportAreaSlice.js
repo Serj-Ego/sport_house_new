@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../../api/api";
-import { Platform } from "react-native";
 
 let initialState = {
   sportAreaOwnerList: [],
@@ -13,23 +12,18 @@ let initialState = {
  */
 export const SportAreaCreateApiRequest = createAsyncThunk(
   "sportArea/SportAreaCreateApiRequest",
-  async (data, { rejectWithValue }) => {
-    const img = new FormData();
-    let options = { json: data };
-    if (data.images.length > 1) {
-      data.images.forEach((photo) => {
-        img.append("images", {
-          name: photo.fileName,
-          type: photo.type,
-          uri:
-            Platform.OS === "ios"
-              ? photo.uri.replace("file://", "")
-              : photo.uri,
-        });
+  async ({ data, images }, { rejectWithValue }) => {
+    const fieldsData = new FormData();
+
+    images.forEach((photo) => {
+      fieldsData.append("images", {
+        name: photo.fileName,
+        type: photo.type,
+        uri: photo.uri,
       });
-      img.append("data", JSON.stringify(data));
-      options = { body: img };
-    }
+    });
+    fieldsData.append("data", JSON.stringify(data));
+    const options = { body: fieldsData };
 
     const response = await api.post(`location/create/`, options);
     const dataResponse = await response.json();

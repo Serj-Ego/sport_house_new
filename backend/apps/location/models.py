@@ -1,5 +1,6 @@
 from django.contrib.auth.models import Permission
 from django.db import models
+from django.utils import timezone
 
 from apps.base.models import (
     File,
@@ -9,6 +10,7 @@ from apps.base.models import (
     LocationCategory,
     LocationSportType,
 )
+from apps.user.models import User
 
 
 # Create your models here.
@@ -50,11 +52,16 @@ class WorkTimeLocation(models.Model):
     """Время работы спортивной площадки"""
 
     week_name = models.CharField("День Недели", max_length=255)
-    start_date = models.DateTimeField("Начало работы")
-    end_date = models.DateTimeField("Завершение работы")
+    start_date = models.DateTimeField("Начало работы", null=True)
+    end_date = models.DateTimeField("Завершение работы", null=True)
 
     def __str__(self):
-        return self.week_name
+        if self.start_date and self.end_date:
+            return (
+                f"{self.week_name} ({self.start_date.time()} - {self.end_date.time()})"
+            )
+        else:
+            return f"{self.week_name} (Выходной)"
 
     class Meta:
         verbose_name = "Время работы спортивной площадки"
@@ -223,6 +230,35 @@ class Location(models.Model):
         verbose_name="Менеджеры",
         related_name="managers",
     )
+    is_blocked = models.BooleanField("Блокировка", default=False)
+
+    def add_status(self, user: User, status_name: str, commentary=""):
+        """
+        Добавить новый статус спортивной площадке
+
+        :param user: Пользователь изменивший статус
+        :param status_name: Новый статус
+        :param commentary: Комментарий к статусу
+        """
+
+        return ListLocationStatus.objects.create(
+            created_date=timezone.now(),
+            user=user,
+            status=Status.objects.get(name=status_name),
+            commentary=commentary,
+            location=self,
+        )
+
+    @property
+    def last_status(self):
+        """Последний статус у спортивной площадки"""
+
+        return (
+            ListLocationStatus.objects.filter(location=self)
+            .order_by("-created_date")
+            .first()
+            .status.name
+        )
 
     class Meta:
         verbose_name = "Спортивная площадка"

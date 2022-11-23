@@ -1,9 +1,11 @@
+from django.urls import path
+
+from apps.location.api.views import LocationCreateAPIView
+
 app_name = "location"
 
 urlpatterns = [
-    # path("category/", LocationCategoryListAPIView.as_view(), name="location-category"),
-    # path("sport/type/", LocationSportTypeListAPIView.as_view(), name="sport-types"),
-    # path("create/", LocationCreateAPIView.as_view(), name="location-create"),
+    path("create/", LocationCreateAPIView.as_view(), name="location-create"),
     # path("list/view/", LocationListAPIView.as_view(), name="location-list-view"),
     # path(
     #     "change/status/<int:pk>",

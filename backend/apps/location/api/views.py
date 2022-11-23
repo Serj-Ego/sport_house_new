@@ -1,43 +1,39 @@
 # Create your views here.
+import json
 
-# class LocationCreateAPIView(APIView):
-#     """Создание новой спортивной площадки"""
-#
-#     permission_classes = (IsAuthenticated,)
-#
-#     def post(self, request, *args, **kwargs):
-#         if request.data.__len__() == 2:
-#             data = json.loads(request.data.pop("data")[0])
-#             data["images"] = request.data.pop("images", None)
-#         else:
-#             data = request.data
-#         serializer = LocationCreateSerializer(
-#             data=data,
-#             context={
-#                 "user": self.request.user,
-#             },
-#         )
-#         if serializer.is_valid(raise_exception=True):
-#             serializer.save()
-#         return Response({}, status=status.HTTP_200_OK)
+from rest_framework import status
+from rest_framework.generics import CreateAPIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
+from apps.base.models import RoleConst
+from apps.base.permissions import HasGroupPermission
+from apps.location.api.serializers import LocationCreateSerializer
+from apps.location.models import Location
 
 
-# class LocationListAPIView(ListAPIView, UpdateAPIView):
-#     """Вывод спортивных площадок"""
-#
-#     permission_classes = (IsAuthenticated,)
-#     pagination_class = None
-#     queryset = Location.objects.all()
-#     serializer_class = LocationOwnerListSerializer
-#
-#     def get_queryset(self):
-#         return Location.objects.filter(owner=self.request.user).order_by("-id")
-#
-#     def get_serializer_context(self):
-#         """Проставляем в контекст сериализатора пользователя"""
-#         return {
-#             "user": self.request.user,
-#         }
+class LocationCreateAPIView(CreateAPIView):
+    """Создание новой спортивной площадки"""
+
+    permission_classes = (
+        IsAuthenticated,
+        HasGroupPermission,
+    )
+    permission_groups = (RoleConst.SPORT_AREA,)
+    serializer_class = LocationCreateSerializer
+    queryset = Location.objects.all()
+
+    def post(self, request, *args, **kwargs):
+        data = json.loads(request.data.pop("data")[0])
+        data["images"] = request.data.pop("images", None)
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(data={}, status=status.HTTP_201_CREATED)
+
+    def get_serializer_context(self):
+        """Проставляем в контекст сериализатора пользователя"""
+        return {"user": self.request.user, "request": self.request}
 
 
 # class LocationForUserListAPIView(ListAPIView):

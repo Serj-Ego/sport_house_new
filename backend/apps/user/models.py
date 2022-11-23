@@ -57,6 +57,10 @@ class User(AbstractUser):
             return True
         return False
 
+    @property
+    def group_names(self) -> set[str]:
+        return set(self.groups.all().values_list("name", flat=True))
+
     class Meta:
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"

@@ -84,9 +84,9 @@ export default function SportAreaOptions() {
         <Heading mt={2}>Характеристика объекта</Heading>
         <ScrollView style={{ borderRadius: 12, marginVertical: 12 }}>
           <VStack space={2}>
-            {options.map((value) => {
+            {options.map((value, index) => {
               return (
-                <HStack space={2}>
+                <HStack space={2} key={index}>
                   {value.map((item) => {
                     return (
                       <TouchableOpacity
@@ -101,6 +101,7 @@ export default function SportAreaOptions() {
                         }}
                       >
                         <Box
+                          key={index}
                           style={{
                             height: 55,
                             width:
