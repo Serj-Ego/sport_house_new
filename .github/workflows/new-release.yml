@@ -26,6 +26,8 @@ jobs:
     name: Install and build
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout to folder
+        run: cd frontend/
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
@@ -38,9 +40,7 @@ jobs:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
       - name: Install dependencies
-        run: |
-          cd frontend/
-          npm ci --legacy-peer-deps
+        run: npm ci --legacy-peer-deps
       - name: Build on EAS
         run: expo publish
   tag:
