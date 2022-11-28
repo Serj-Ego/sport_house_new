@@ -8,25 +8,24 @@ jobs:
   build_front:
     name: Install and build
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
-        working-directory: ./frontend
         with:
           node-version: 16.x
           cache: npm
       - name: Setup Expo and EAS
-        working-directory: ./frontend
         uses: expo/expo-github-action@v7
         with:
           expo-version: 5.x
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
       - name: Install dependencies
-        working-directory: ./frontend
         run: npm ci --legacy-peer-deps
       - name: Build on EAS
-        working-directory: ./frontend
         run: expo publish
 
   deploy_api:
