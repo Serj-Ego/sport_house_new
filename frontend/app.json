@@ -2,6 +2,7 @@
   "expo": {
     "name": "Sport House - Доступный спорт",
     "slug": "sport_house_3_1",
+    "owner": "yungerpeople",
     "version": "3.0.1",
     "orientation": "portrait",
     "icon": "./app/assets/icon.png",
