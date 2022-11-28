@@ -17,15 +17,15 @@ export const COLORS_LIGHT_THEME = {
 };
 
 export const COLORS_DARK_THEME = {
-  BACKGROUND: "#1c1c1e",
-  DARK_BLOCK: "#3a3a3c",
+  BACKGROUND: "#0e0e0e",
+  DARK_BLOCK: "rgba(28,28,28,0.94)",
   TEXT: "#FFFFFF",
   SUBTEXT: "#F8F8FB",
 };
 
 export const COLORS_FORM = {
   INPUT: "#e3e3ea",
-  DARK_INPUT: "#37383D",
+  DARK_INPUT: "#222225",
   PLACEHOLDER: "#8f8b8b",
   LABEL: "#6E7191",
 };

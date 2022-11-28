@@ -1,17 +1,27 @@
 from django.urls import path
 
-from apps.location.api.views import LocationCreateAPIView
+from apps.location.api.views import (
+    LocationCreateAPIView,
+    LocationOwnerListAPIVIew,
+    LocationOwnerChangeStatusUpdateAPIView,
+    LocationOwnerRetrieveAPIView,
+)
 
 app_name = "location"
 
 urlpatterns = [
     path("create/", LocationCreateAPIView.as_view(), name="location-create"),
-    # path("list/view/", LocationListAPIView.as_view(), name="location-list-view"),
-    # path(
-    #     "change/status/<int:pk>",
-    #     LocationListAPIView.as_view(),
-    #     name="location-sent-review",
-    # ),
+    path("owner/", LocationOwnerListAPIVIew.as_view(), name="location-owner"),
+    path(
+        "change/status/<int:pk>",
+        LocationOwnerChangeStatusUpdateAPIView.as_view(),
+        name="location-change-status",
+    ),
+    path(
+        "owner/<int:pk>",
+        LocationOwnerRetrieveAPIView.as_view(),
+        name="location-owner-retrieve",
+    )
     # path(
     #     "list/user/view/",
     #     LocationForUserListAPIView.as_view(),

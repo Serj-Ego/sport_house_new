@@ -3,19 +3,25 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   sportAreaOwnerList,
   SportAreaOwnerListApiRequest,
-  updatedStatusSportArea,
 } from "../../services/redux/slices/sportAreaSlice";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { ActivityIndicator, FlatList } from "react-native";
+import { ActivityIndicator, RefreshControl, SafeAreaView } from "react-native";
+import { Box, View } from "native-base";
 import SportsAreaItem from "./components/SportsAreaItem";
-import { PADDING_LR_MAIN } from "../../modules/Theme/padding";
+import {
+  COLORS_DARK_THEME,
+  COLORS_LIGHT_THEME,
+} from "../../modules/Theme/colors";
+import SearchBarSportArea from "./components/SearchBarSportArea";
+import ScreenHeader from "../../components/ScreenHeader";
+import Animated, { FadeInUp, Layout } from "react-native-reanimated";
 
-export default function SportsArea() {
+export default function SportsArea({ route, navigation }) {
   const dispatch = useDispatch();
   const sportAreaList = useSelector(sportAreaOwnerList);
   const [isLoading, setIsLoading] = useState(false);
-  const stateChangeStatus = useSelector(updatedStatusSportArea);
+
   useEffect(() => {
     setIsLoading(true);
     dispatch(SportAreaOwnerListApiRequest())
@@ -26,18 +32,51 @@ export default function SportsArea() {
       .catch((err) => {
         setIsLoading(false);
       });
-  }, [stateChangeStatus]);
+  }, []);
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    dispatch(SportAreaOwnerListApiRequest())
+      .then(unwrapResult)
+      .finally(() => setRefreshing(false));
+  };
   return (
-    <DefaultBackground paddingTop={PADDING_LR_MAIN}>
-      {isLoading ? (
-        <ActivityIndicator />
-      ) : (
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          data={sportAreaList}
-          renderItem={({ item }) => <SportsAreaItem item={item} />}
-        />
-      )}
+    <DefaultBackground paddingTop={0}>
+      <SafeAreaView>
+        <ScreenHeader title={"Мои объекты"} />
+        {isLoading ? (
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
+            }}
+          >
+            <ActivityIndicator size={"large"} />
+          </View>
+        ) : (
+          <Animated.FlatList
+            layout={Layout}
+            entering={FadeInUp}
+            data={sportAreaList}
+            style={{ height: "100%" }}
+            ItemSeparatorComponent={() => (
+              <Box
+                style={{ height: 4 }}
+                _light={{ backgroundColor: COLORS_LIGHT_THEME.BACKGROUND }}
+                _dark={{ backgroundColor: COLORS_DARK_THEME.BACKGROUND }}
+              />
+            )}
+            renderItem={({ item }) => <SportsAreaItem item={item} />}
+            ListHeaderComponent={<SearchBarSportArea />}
+            stickyHeaderIndices={[0]}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+          />
+        )}
+      </SafeAreaView>
     </DefaultBackground>
   );
 }

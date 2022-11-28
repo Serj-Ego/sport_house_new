@@ -1,4 +1,4 @@
-import { Box } from "native-base";
+import { View } from "native-base";
 import { PADDING_LR_MAIN } from "../modules/Theme/padding";
 import { COLORS_DARK_THEME, COLORS_LIGHT_THEME } from "../modules/Theme/colors";
 import { getStatusBarHeight } from "react-native-status-bar-height";
@@ -10,7 +10,7 @@ export default function DefaultBackground({
   children,
 }) {
   return (
-    <Box
+    <View
       _light={{
         backgroundColor: COLORS_LIGHT_THEME.BACKGROUND,
       }}
@@ -28,6 +28,6 @@ export default function DefaultBackground({
       }}
     >
       {children}
-    </Box>
+    </View>
   );
 }

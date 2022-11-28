@@ -7,7 +7,7 @@ export const PROFILE_ROUTE = {
 
   SPORT_AREA_ITEMS: {
     route: "sport_area_items",
-    title: "Мои спортивные площадки",
+    title: "Мои объекты",
   },
   SPORT_AREA_ADD: {
     route: "sport_area_add",

@@ -40,8 +40,10 @@ export const SportAreaCreateApiRequest = createAsyncThunk(
  */
 export const SportAreaOwnerListApiRequest = createAsyncThunk(
   "sportArea/SportAreaOwnerListApiRequest",
-  async (_, { rejectWithValue }) => {
-    const response = await api.get(`location/list/view/`);
+  async (searchText = null, { rejectWithValue }) => {
+    const response = await api.get(`location/owner/`, {
+      searchParams: { ...filterSearchParams({ search: searchText }) },
+    });
     const dataResponse = await response.json();
     if (!response.ok) {
       return rejectWithValue(dataResponse);

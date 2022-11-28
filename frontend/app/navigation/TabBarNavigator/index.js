@@ -12,6 +12,7 @@ import { useSelector } from "react-redux";
 import { userInfoData } from "../../services/redux/slices/userSlice";
 import { RoleConst } from "../../modules/RoleConst";
 import SearchSportArea from "../../views/SearchSportArea";
+import SportsArea from "../../views/SportsArea";
 
 const Tab = createBottomTabNavigator();
 
@@ -33,6 +34,9 @@ export default function TabBarNavigator() {
           }
           if (route.name === TAB_ROUTES.SEARCH_SPORT_AREA) {
             iconName = focused ? "ios-search-sharp" : "ios-search-outline";
+          }
+          if (route.name === TAB_ROUTES.SPORT_AREA_OWNER_VIEW) {
+            iconName = focused ? "ios-albums-sharp" : "ios-albums-outline";
           }
 
           // You can return any component that you like here!
@@ -56,6 +60,13 @@ export default function TabBarNavigator() {
           name={TAB_ROUTES.SEARCH_SPORT_AREA}
           options={{ tabBarLabel: "Поиск" }}
           component={SearchSportArea}
+        />
+      )}
+      {userDataState.role === RoleConst.SPORT_AREA && (
+        <Tab.Screen
+          name={TAB_ROUTES.SPORT_AREA_OWNER_VIEW}
+          options={{ tabBarLabel: " Мои объекты" }}
+          component={SportsArea}
         />
       )}
       <Tab.Screen
