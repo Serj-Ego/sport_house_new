@@ -15,6 +15,7 @@ const api = ky.create({
     beforeRequest: [
       async (request) => {
         const token = await AsyncStorage.getItem("token");
+        console.log(token);
         if (token) {
           request.headers.set("Authorization", `Token ${token}`);
         }
@@ -41,9 +42,6 @@ const api = ky.create({
         }
         if (response.ok) {
           return response;
-        }
-        if (response.status === 403) {
-          await AsyncStorage.removeItem("token");
         }
         return response;
       },

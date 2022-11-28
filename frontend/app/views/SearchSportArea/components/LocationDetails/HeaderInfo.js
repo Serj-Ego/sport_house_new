@@ -55,7 +55,6 @@ export default function HeaderInfo({ selectedLocation, refBottom }) {
       </View>
       <TouchableWithoutFeedback
         onPress={() => {
-          console.log(refBottom);
           refBottom.current.dismiss();
         }}
       >

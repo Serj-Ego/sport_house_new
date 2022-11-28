@@ -1,68 +1,30 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../../api/api";
-import { Platform } from "react-native";
+import filterSearchParams from "../../../modules/filterSearchParams";
 
 let initialState = {
-  sportAreaTypesList: [],
-  sportAreaSportTypesList: [],
-
   sportAreaOwnerList: [],
   updatedStatusSportArea: {},
   sportAreaUserList: [],
 };
 
 /**
- * Получить список типов спортивных площадок.
- */
-export const SportAreaTypesApiRequest = createAsyncThunk(
-  "sportArea/SportAreaTypesApiRequest",
-  async (_, { rejectWithValue }) => {
-    const response = await api.get(`location/category/`);
-    const dataResponse = await response.json();
-    if (!response.ok) {
-      return rejectWithValue(dataResponse);
-    }
-    return dataResponse;
-  }
-);
-
-/**
- * Получить список видов спорта спортивных площадок.
- */
-export const SportAreaSportTypesApiRequest = createAsyncThunk(
-  "sportArea/SportAreaSportTypesApiRequest",
-  async (_, { rejectWithValue }) => {
-    const response = await api.get(`location/sport/type/`);
-    const dataResponse = await response.json();
-    if (!response.ok) {
-      return rejectWithValue(dataResponse);
-    }
-    return dataResponse;
-  }
-);
-
-/**
  * Создание спортивной площадки.
  */
 export const SportAreaCreateApiRequest = createAsyncThunk(
   "sportArea/SportAreaCreateApiRequest",
-  async (data, { rejectWithValue }) => {
-    const img = new FormData();
-    let options = { json: data };
-    if (data.images.length > 1) {
-      data.images.forEach((photo) => {
-        img.append("images", {
-          name: photo.fileName,
-          type: photo.type,
-          uri:
-            Platform.OS === "ios"
-              ? photo.uri.replace("file://", "")
-              : photo.uri,
-        });
+  async ({ data, images }, { rejectWithValue }) => {
+    const fieldsData = new FormData();
+
+    images.forEach((photo) => {
+      fieldsData.append("images", {
+        name: photo.fileName,
+        type: photo.type,
+        uri: photo.uri,
       });
-      img.append("data", JSON.stringify(data));
-      options = { body: img };
-    }
+    });
+    fieldsData.append("data", JSON.stringify(data));
+    const options = { body: fieldsData };
 
     const response = await api.post(`location/create/`, options);
     const dataResponse = await response.json();
@@ -78,8 +40,10 @@ export const SportAreaCreateApiRequest = createAsyncThunk(
  */
 export const SportAreaOwnerListApiRequest = createAsyncThunk(
   "sportArea/SportAreaOwnerListApiRequest",
-  async (_, { rejectWithValue }) => {
-    const response = await api.get(`location/list/view/`);
+  async (searchText = null, { rejectWithValue }) => {
+    const response = await api.get(`location/owner/`, {
+      searchParams: { ...filterSearchParams({ search: searchText }) },
+    });
     const dataResponse = await response.json();
     if (!response.ok) {
       return rejectWithValue(dataResponse);
@@ -119,24 +83,26 @@ export const SportAreaUserListApiRequest = createAsyncThunk(
     return dataResponse;
   }
 );
+
+/**
+ * Получить информацию спортивной площадки для создателя.
+ */
+export const SportAreaRetrieveOwnerApiRequest = createAsyncThunk(
+  "sportArea/SportAreaRetrieveOwnerApiRequest",
+  async (id, { rejectWithValue }) => {
+    const response = await api.get(`location/owner/${id}`);
+    const dataResponse = await response.json();
+    if (!response.ok) {
+      return rejectWithValue(dataResponse);
+    }
+    return dataResponse;
+  }
+);
 const baseSlice = createSlice({
   name: "sportArea",
   initialState,
   reducers: {},
   extraReducers: {
-    /**
-     * Получить список типо спортивных площадок.
-     */
-    [SportAreaTypesApiRequest.fulfilled]: (state, action) => {
-      state.sportAreaTypesList = action.payload;
-    },
-    /**
-     * Получить список видов спорта спортивных площадок.
-     */
-    [SportAreaSportTypesApiRequest.fulfilled]: (state, action) => {
-      state.sportAreaSportTypesList = action.payload;
-    },
-
     /**
      * Получить список спортивных площадок у менеджера.
      */
@@ -160,10 +126,6 @@ const baseSlice = createSlice({
   },
 });
 export default baseSlice.reducer;
-
-export const sportAreaTypesList = (state) => state.sportArea.sportAreaTypesList;
-export const sportAreaSportTypesList = (state) =>
-  state.sportArea.sportAreaSportTypesList;
 
 export const sportAreaOwnerList = (state) => state.sportArea.sportAreaOwnerList;
 

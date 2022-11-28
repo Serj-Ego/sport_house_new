@@ -1,55 +1,117 @@
 from django.contrib import admin, messages
-from django.contrib.admin import SimpleListFilter
-from django.db.models import F, Subquery
 from django.http import HttpResponseRedirect
 from django.urls import path
 from django.utils.html import format_html
 
-from apps.base.models import StatusConst, Status
-
-# Register your models here.
-from apps.location.models import (
-    LocationCategory,
-    LocationSportType,
-    Location,
-    LocationStatus,
-)
-
-
-@admin.register(LocationCategory)
-class LocationCategoryAdmin(admin.ModelAdmin):
-    list_display = ["name", "description"]
-    search_fields = ("name",)
-
-
-@admin.register(LocationSportType)
-class LocationSportTypeAdmin(admin.ModelAdmin):
-    list_display = ["name", "slug"]
-    search_fields = ("name",)
-
-
-# class StatusLocationFilter(SimpleListFilter):
-#     title = "Статус"
-#     parameter_name = "status"
-#
-#     def lookups(self, request, model_admin):
-#         countries = set([c.last_status for c in model_admin.model.objects.all()])
-#         return [(c.id, c.name) for c in countries]
-#
-#     def queryset(self, request, queryset):
-#         if self.value():
-#             a = queryset.all().annotate(last_status_id=Subquery())
-#             return queryset.filter(status_list__status__id=self.value())
+from apps.base.models import StatusConst
+from apps.location.models import Location
 
 
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
-    list_display = [
-        "name",
-        "description",
+    """Регистрация спортивной площадки в административной панели"""
+
+    list_display = (
+        "full_name",
+        "category",
+        "sport_type",
         "get_last_status",
+        "is_blocked",
         "location_actions",
-    ]
+    )
+    search_fields = (
+        "full_name",
+        "short_name",
+        "phone",
+        "email",
+    )
+
+    filter_horizontal = (
+        "images",
+        "work_time",
+        "options",
+        "keywords",
+    )
+
+    list_filter = (
+        "is_blocked",
+        "category",
+        "sport_type",
+    )
+
+    fieldsets = (
+        (
+            "Основная информация",
+            {
+                "fields": (
+                    "full_name",
+                    "short_name",
+                    "description",
+                    "images",
+                    "img_preview",
+                    "address",
+                    "work_time",
+                    "price",
+                )
+            },
+        ),
+        (
+            "Размеры площадки",
+            {
+                "fields": (
+                    "length",
+                    "width",
+                    "squad",
+                )
+            },
+        ),
+        (
+            "Характеристики площадки",
+            {
+                "fields": (
+                    "lighting",
+                    "coating",
+                    "category",
+                    "sport_type",
+                    "is_covered",
+                    "options",
+                )
+            },
+        ),
+        (
+            "Контактные данные площадки",
+            {
+                "fields": (
+                    "phone",
+                    "additional_phone",
+                    "additional_phone_code",
+                    "email",
+                    "web_site",
+                )
+            },
+        ),
+        (
+            "Опционально",
+            {"fields": ("keywords",)},
+        ),
+        (
+            "Внутренняя информация",
+            {
+                "fields": (
+                    "owner",
+                    "created_date",
+                    # "managers",
+                    "is_blocked",
+                    "get_last_status",
+                )
+            },
+        ),
+    )
+    readonly_fields = (
+        "created_date",
+        "img_preview",
+        "get_last_status",
+    )
 
     def get_last_status(self, obj):
         if obj.last_status:
@@ -57,7 +119,23 @@ class LocationAdmin(admin.ModelAdmin):
         else:
             return "Not Available"
 
-    get_last_status.short_description = "Текущий статус"
+    def img_preview(self, obj):
+        images = obj.images.all()
+        img_html = "<table><thead><tr>"
+        for image in images:
+            img_html = (
+                img_html
+                + f'<td><img src="{image.path.url}" width = "300px" height = "300px"/></td>'
+            )
+        img_html = img_html + "</tr></thead></table>"
+        from django.utils.safestring import mark_safe
+
+        return mark_safe(img_html)
+
+    img_preview.short_description = "Предпросмотр фото"
+    img_preview.allow_tags = True
+
+    get_last_status.short_description = "Последний статус"
 
     def get_urls(self):
         urls = super().get_urls()
@@ -71,6 +149,16 @@ class LocationAdmin(admin.ModelAdmin):
                 "<int:pk>/reject-location/",
                 self.reject_location,
                 name="reject-location",
+            ),
+            path(
+                "<int:pk>/block-location/",
+                self.block_location,
+                name="block-location",
+            ),
+            path(
+                "<int:pk>/remove-block-location/",
+                self.remove_block_location,
+                name="remove-block-location",
             ),
         ]
         return custom_urls + urls
@@ -96,17 +184,48 @@ class LocationAdmin(admin.ModelAdmin):
         messages.add_message(request, messages.ERROR, "Спортивная площадка отклонена!")
         return HttpResponseRedirect("../")
 
+    def block_location(self, request, pk):
+        instance = Location.objects.get(pk=pk)
+        instance.is_blocked = True
+        instance.save()
+        messages.add_message(
+            request, messages.ERROR, "Спортивная площадка заблокирована!"
+        )
+        return HttpResponseRedirect("../")
+
+    def remove_block_location(self, request, pk):
+        instance = Location.objects.get(pk=pk)
+        instance.is_blocked = False
+        instance.save()
+        messages.add_message(
+            request, messages.SUCCESS, "Спортивная площадка разблокирована!"
+        )
+        return HttpResponseRedirect("../")
+
     def location_actions(self, obj):
-        if obj.last_status.name == StatusConst.REVIEW:
+        if obj.last_status == StatusConst.REVIEW:
             return format_html(
                 f'<a class="button" style="background:green" href="{obj.pk}/approve-location/">Подтвердить</a>'
                 f"</br>"
                 f"</br>"
                 f'<a class="button" style="background:red" href="{obj.pk}/reject-location/">Отклонить</a>',
             )
+        elif (
+            obj.last_status
+            in (StatusConst.PUBLISHED, StatusConst.ARCHIVE, StatusConst.CREATED)
+            and not obj.is_blocked
+        ):
+            return format_html(
+                f'<a class="button" style="background:silver" href="{obj.pk}/block-location/">Заблокировать</a>'
+            )
+        elif (
+            obj.last_status
+            in (StatusConst.PUBLISHED, StatusConst.ARCHIVE, StatusConst.CREATED)
+            and obj.is_blocked
+        ):
+            return format_html(
+                f'<a class="button" style="background:silver" href="{obj.pk}/remove-block-location/">Разблокировать</a>'
+            )
 
     location_actions.short_description = "Действия"
     location_actions.allow_tags = True
-
-    search_fields = ("name",)
-    list_filter = ("created_date",)

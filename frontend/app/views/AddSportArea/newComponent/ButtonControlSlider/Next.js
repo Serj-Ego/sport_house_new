@@ -45,9 +45,6 @@ export default function Next({
         }}
       >
         <HStack space={2}>
-          {/*<Text color={"white"} fontSize={18}>*/}
-          {/*  Далее*/}
-          {/*</Text>*/}
           <Entypo name="chevron-right" size={24} color="white" />
         </HStack>
       </LinearGradient>

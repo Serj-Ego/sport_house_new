@@ -5,6 +5,8 @@ from apps.ai.models import ModelType, FileRecomendationModel, OrderRecomendation
 
 @admin.register(ModelType)
 class ModelTypeAdmin(admin.ModelAdmin):
+    """Регистрация типа модели для ИИ"""
+
     list_display = [
         "name",
     ]
@@ -13,6 +15,8 @@ class ModelTypeAdmin(admin.ModelAdmin):
 
 @admin.register(FileRecomendationModel)
 class FileRecomendationModelAdmin(admin.ModelAdmin):
+    """Регистрация файла модели для ИИ"""
+
     list_display = [
         "name",
         "created_date",
@@ -24,6 +28,8 @@ class FileRecomendationModelAdmin(admin.ModelAdmin):
 
 @admin.register(OrderRecomendationField)
 class OrderRecomendationFieldAdmin(admin.ModelAdmin):
+    """Регистрация порядка рекомендаций для ИИ"""
+
     list_display = [
         "name",
         "slug",

@@ -26,6 +26,8 @@ export default function ScreenHeader({ title, children = false }) {
       _dark={{
         color: COLORS_DARK_THEME.TEXT,
       }}
+      paddingBottom={4}
+      size={"xl"}
     >
       {title}
     </Heading>
