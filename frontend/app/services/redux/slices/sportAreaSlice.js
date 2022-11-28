@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../../api/api";
+import filterSearchParams from "../../../modules/filterSearchParams";
 
 let initialState = {
   sportAreaOwnerList: [],
@@ -73,6 +74,21 @@ export const SportAreaUserListApiRequest = createAsyncThunk(
   "sportArea/SportAreaUserListApiRequest",
   async (_, { rejectWithValue }) => {
     const response = await api.get(`location/list/user/view/`);
+    const dataResponse = await response.json();
+    if (!response.ok) {
+      return rejectWithValue(dataResponse);
+    }
+    return dataResponse;
+  }
+);
+
+/**
+ * Получить информацию спортивной площадки для создателя.
+ */
+export const SportAreaRetrieveOwnerApiRequest = createAsyncThunk(
+  "sportArea/SportAreaRetrieveOwnerApiRequest",
+  async (id, { rejectWithValue }) => {
+    const response = await api.get(`location/owner/${id}`);
     const dataResponse = await response.json();
     if (!response.ok) {
       return rejectWithValue(dataResponse);

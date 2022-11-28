@@ -10,16 +10,19 @@ import {
 } from "../../modules/Theme/colors";
 import React, { createContext, useState } from "react";
 import { useColorScheme } from "react-native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "react-native-screens/native-stack";
 import AddSportArea from "../../views/AddSportArea";
 import { MAP_ROUTE } from "../../modules/NavigationRoutes/map";
 import EnrollLocation from "../../views/EnrollLocation";
 import SelectAddressMap from "../../views/SelectAddressMap";
 import CheckDataView from "../../views/AddSportArea/CheckDataView";
+import { SPORT_AREA } from "../../modules/NavigationRoutes/sportArea";
+import SportAreaDetailView from "../../views/SportsArea/SportAreaDetailView";
+import SportAreaStatusHistory from "../../views/SportsArea/SportAreaStatusHistory";
 
 export const addSportAreaContext = createContext();
 
-const Index = createStackNavigator();
+const Index = createNativeStackNavigator();
 export default function AdditionalStackNavigator() {
   const colorScheme = useColorScheme();
   const [fullName, setFullName] = useState("");
@@ -100,6 +103,7 @@ export default function AdditionalStackNavigator() {
     setKeyWords,
   };
   //___________________________________________//
+
   return (
     <addSportAreaContext.Provider value={state}>
       <Index.Navigator>
@@ -233,6 +237,41 @@ export default function AdditionalStackNavigator() {
             presentation: "modal",
             title: MAP_ROUTE.ENROLL.title,
             headerBackTitle: "Отмена",
+            headerTitleStyle: {
+              color:
+                colorScheme === "light"
+                  ? COLORS_LIGHT_THEME.TEXT
+                  : COLORS_DARK_THEME.TEXT,
+            },
+            headerStyle: {
+              backgroundColor:
+                colorScheme === "light"
+                  ? COLORS_LIGHT_THEME.BACKGROUND
+                  : COLORS_DARK_THEME.BACKGROUND,
+            },
+          }}
+        />
+        <Index.Screen
+          name={SPORT_AREA.SPORT_AREA_OWNER_DETAIL.route}
+          component={SportAreaDetailView}
+          options={{
+            headerShown: false,
+            stackPresentation: "modal",
+          }}
+        />
+        <Index.Screen
+          name={SPORT_AREA.SPORT_AREA_OWNER_DETAIL_STATUSES.route}
+          component={SportAreaStatusHistory}
+          initialParams={{
+            header: SPORT_AREA.SPORT_AREA_OWNER_DETAIL_STATUSES.title,
+          }}
+          options={{
+            stackPresentation: "modal",
+            headerShown: true,
+            presentation: "modal",
+            title: SPORT_AREA.SPORT_AREA_OWNER_DETAIL_STATUSES.title,
+            // headerLargeTitle: true,
+            headerLargeTitleStyle: { fontSize: 26 },
             headerTitleStyle: {
               color:
                 colorScheme === "light"

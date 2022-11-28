@@ -9,72 +9,7 @@ import { Box, Heading, HStack, Icon, View, VStack } from "native-base";
 import { Spacer } from "native-base/src/components/primitives/Flex";
 import { WIDTH } from "../../../../modules/Theme/dimensions";
 import { ScrollView, TouchableOpacity } from "react-native";
-import {
-  FontAwesome5,
-  MaterialCommunityIcons,
-  MaterialIcons,
-} from "@expo/vector-icons";
-
-const options = [
-  [
-    { iconName: "checkroom", iconLib: MaterialIcons, value: "Раздевалка" },
-    { iconName: "shower", iconLib: FontAwesome5, value: "Душ" },
-  ],
-  [
-    {
-      iconName: "food-variant",
-      iconLib: MaterialCommunityIcons,
-      value: "Точка питания",
-    },
-  ],
-  [
-    { iconName: "toilet", iconLib: MaterialCommunityIcons, value: "Туалет" },
-    { iconName: "wifi", iconLib: MaterialCommunityIcons, value: "WI-FI" },
-  ],
-  [
-    {
-      iconName: "security",
-      iconLib: MaterialCommunityIcons,
-      value: "Охрана объекта",
-    },
-  ],
-  [
-    { iconName: "bank", iconLib: MaterialCommunityIcons, value: "Банкомат" },
-    {
-      iconName: "medical-bag",
-      iconLib: MaterialCommunityIcons,
-      value: "Медпункт",
-    },
-  ],
-  [
-    {
-      iconName: "bus",
-      iconLib: MaterialCommunityIcons,
-      value: "Общественный транспорт",
-    },
-  ],
-  [
-    {
-      iconName: "parking",
-      iconLib: MaterialCommunityIcons,
-      value: "Парковка",
-    },
-  ],
-  [
-    {
-      iconName: "payment",
-      iconLib: MaterialIcons,
-      value: "Оплата картой",
-    },
-  ],
-  [
-    {
-      iconName: "payments",
-      iconLib: MaterialIcons,
-      value: "Оплата наличными",
-    },
-  ],
-];
+import { SportAreaOptionsConstList } from "../../../../modules/SportAreaOptionsConstList";
 
 export default function SportAreaOptions() {
   const { optionsZone, setOptionsZone } = useContext(addSportAreaContext);
@@ -84,7 +19,7 @@ export default function SportAreaOptions() {
         <Heading mt={2}>Характеристика объекта</Heading>
         <ScrollView style={{ borderRadius: 12, marginVertical: 12 }}>
           <VStack space={2}>
-            {options.map((value, index) => {
+            {SportAreaOptionsConstList.map((value, index) => {
               return (
                 <HStack space={2} key={index}>
                   {value.map((item) => {
