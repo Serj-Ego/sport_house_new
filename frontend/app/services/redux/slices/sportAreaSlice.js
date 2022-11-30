@@ -6,6 +6,8 @@ let initialState = {
   sportAreaOwnerList: [],
   updatedStatusSportArea: {},
   sportAreaUserList: [],
+
+  sportAreaDetailView: {},
 };
 
 /**
@@ -53,23 +55,6 @@ export const SportAreaOwnerListApiRequest = createAsyncThunk(
 );
 
 /**
- * Изменить статус спортивной площадки.
- */
-export const SportAreaChangeStatusApiRequest = createAsyncThunk(
-  "sportArea/SportAreaChangeStatusApiRequest",
-  async ({ id, status }, { rejectWithValue }) => {
-    const response = await api.put(`location/change/status/${id}`, {
-      json: { status: status },
-    });
-    const dataResponse = await response.json();
-    if (!response.ok) {
-      return rejectWithValue(dataResponse);
-    }
-    return dataResponse;
-  }
-);
-
-/**
  * Получить список спортивных площадок для пользователя.
  */
 export const SportAreaUserListApiRequest = createAsyncThunk(
@@ -98,6 +83,24 @@ export const SportAreaRetrieveOwnerApiRequest = createAsyncThunk(
     return dataResponse;
   }
 );
+
+/**
+ * Изменить статус спортивной площадки.
+ */
+export const SportAreaChangeStatusApiRequest = createAsyncThunk(
+  "sportArea/SportAreaRetrieveOwnerApiRequest",
+  async ({ id, status }, { rejectWithValue }) => {
+    const response = await api.put(`location/change/status/${id}`, {
+      json: { status: status },
+    });
+    const dataResponse = await response.json();
+    if (!response.ok) {
+      return rejectWithValue(dataResponse);
+    }
+    return dataResponse;
+  }
+);
+
 const baseSlice = createSlice({
   name: "sportArea",
   initialState,
@@ -123,6 +126,13 @@ const baseSlice = createSlice({
     [SportAreaUserListApiRequest.fulfilled]: (state, action) => {
       state.sportAreaUserList = action.payload;
     },
+
+    /**
+     * Получить информацию спортивной площадки для создателя.
+     */
+    [SportAreaRetrieveOwnerApiRequest.fulfilled]: (state, action) => {
+      state.sportAreaDetailView = action.payload;
+    },
   },
 });
 export default baseSlice.reducer;
@@ -133,3 +143,5 @@ export const updatedStatusSportArea = (state) =>
   state.sportArea.updatedStatusSportArea;
 
 export const sportAreaUserList = (state) => state.sportArea.sportAreaUserList;
+export const sportAreaDetailView = (state) =>
+  state.sportArea.sportAreaDetailView;

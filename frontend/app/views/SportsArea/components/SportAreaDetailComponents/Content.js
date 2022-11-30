@@ -118,6 +118,7 @@ export default function Content({ y, data }) {
         ]}
       >
         <ActionPanel
+          id={data.id}
           isBlocked={data.is_blocked}
           last_status={data.last_status}
         />

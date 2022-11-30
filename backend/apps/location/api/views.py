@@ -75,7 +75,7 @@ class LocationOwnerChangeStatusUpdateAPIView(UpdateAPIView):
     )
     pagination_class = None
     permission_groups = (RoleConst.SPORT_AREA,)
-    serializer_class = LocationOwnerListSerializer
+    serializer_class = LocationRetrieveOwnerSerializer
     queryset = Location.objects.all()
 
     def get_serializer_context(self):

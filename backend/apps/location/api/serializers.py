@@ -208,18 +208,18 @@ class ListLocationStatusSerializer(serializers.ModelSerializer):
 class LocationRetrieveOwnerSerializer(serializers.ModelSerializer):
     """Сериализатор карточки площадки для создателя"""
 
-    images = serializers.SerializerMethodField()
+    images = serializers.SerializerMethodField(read_only=True)
     last_status = serializers.CharField(read_only=True)
-    address = LocationAddressSerializer()
-    work_time = WorkTimeLocationSerializer(many=True)
-    lighting = serializers.CharField(source="lighting.name")
-    coating = serializers.CharField(source="coating.name")
-    category = serializers.CharField(source="category.name")
-    sport_type = serializers.CharField(source="sport_type.name")
-    options = OptionsSerializer(many=True)
-    keywords = KeyWordsSerializer(many=True)
-    owner = serializers.CharField(source="owner.get_full_name")
-    statuses = serializers.SerializerMethodField()
+    address = LocationAddressSerializer(read_only=True)
+    work_time = WorkTimeLocationSerializer(many=True, read_only=True)
+    lighting = serializers.CharField(source="lighting.name", read_only=True)
+    coating = serializers.CharField(source="coating.name", read_only=True)
+    category = serializers.CharField(source="category.name", read_only=True)
+    sport_type = serializers.CharField(source="sport_type.name", read_only=True)
+    options = OptionsSerializer(many=True, read_only=True)
+    keywords = KeyWordsSerializer(many=True, read_only=True)
+    owner = serializers.CharField(source="owner.get_full_name", read_only=True)
+    statuses = serializers.SerializerMethodField(read_only=True)
 
     def get_statuses(self, obj):
         statuses = obj.listlocationstatus.all().order_by("-created_date")
@@ -234,9 +234,16 @@ class LocationRetrieveOwnerSerializer(serializers.ModelSerializer):
 
         return data
 
+    def update(self, instance, validated_data):
+        status = self.initial_data.get("status", None)
+        if status:
+            instance.add_status(self.context.get("user"), status_name=status)
+        return instance
+
     class Meta:
         model = Location
         fields = (
+            "id",
             "full_name",
             "short_name",
             "description",
@@ -265,168 +272,4 @@ class LocationRetrieveOwnerSerializer(serializers.ModelSerializer):
             "created_date",
             "is_blocked",
         )
-
-
-# class LocationOwnerListSerializer(serializers.ModelSerializer):
-#     """Сериализация спортивных площадок у менеджера"""
-#
-#     images = serializers.SerializerMethodField()
-#     last_status = serializers.SerializerMethodField()
-#     status = serializers.CharField(write_only=True)
-#
-#     def get_last_status(self, obj):
-#         return obj.last_status.name
-#
-#     def get_images(self, obj):
-#         data = []
-#         images = obj.images.all()
-#         for image in images:
-#             data.append({"uri": image.path.url})
-#
-#         return data
-#
-#     def update(self, instance, validated_data):
-#         status_name = validated_data.pop("status", None)
-#         if status_name:
-#             instance.add_status(self.context.get("user"), status_name)
-#             instance.save()
-#         return instance
-#
-#     class Meta:
-#         model = Location
-#         fields = (
-#             "id",
-#             "name",
-#             "description",
-#             "images",
-#             "last_status",
-#             "last_status_commentary",
-#             "status",
-#         )
-#         read_only_fields = (
-#             "id",
-#             "name",
-#             "description",
-#             "images",
-#             "last_status",
-#         )
-
-
-# class LocationForUserSerializer(serializers.ModelSerializer):
-#     """Сериализация первоначальных данных спортивной площадки"""
-#
-#     address = LocationAddressSerializer()
-#     category = CategoryLocationSerializer(many=True)
-#     images = serializers.SerializerMethodField()
-#     is_open = serializers.SerializerMethodField()
-#     work_time_today = serializers.SerializerMethodField()
-#     work_time = serializers.SerializerMethodField()
-#
-#     def get_is_open(self, obj):
-#         weeks = {
-#             "Monday": "Понедельник",
-#             "Tuesday": "Вторник",
-#             "Wednesday": "Среда",
-#             "Thursday": "Четверг",
-#             "Friday": "Пятница",
-#             "Saturday": "Суббота",
-#             "Sunday": "Воскресенье",
-#         }
-#         now = datetime.datetime.now()
-#         week_name_now = weeks[now.strftime("%A")]
-#         work_day = obj.work_time.filter(week_name=week_name_now).first()
-#         if work_day:
-#             start_day = datetime.datetime(
-#                 now.year,
-#                 now.month,
-#                 now.day,
-#                 work_day.start_date.hour,
-#                 work_day.start_date.minute,
-#             )
-#             end_day = datetime.datetime(
-#                 now.year,
-#                 now.month,
-#                 now.day,
-#                 work_day.end_date.hour,
-#                 work_day.end_date.minute,
-#             )
-#             return start_day <= now <= end_day
-#         return False
-#
-#     def get_work_time_today(self, obj):
-#         weeks = {
-#             "Monday": "Понедельник",
-#             "Tuesday": "Вторник",
-#             "Wednesday": "Среда",
-#             "Thursday": "Четверг",
-#             "Friday": "Пятница",
-#             "Saturday": "Суббота",
-#             "Sunday": "Воскресенье",
-#         }
-#         now = datetime.datetime.now()
-#         week_name_now = weeks[now.strftime("%A")]
-#         work_day = obj.work_time.filter(week_name=week_name_now).first()
-#         if work_day:
-#             start_day = datetime.datetime(
-#                 now.year,
-#                 now.month,
-#                 now.day,
-#                 work_day.start_date.hour,
-#                 work_day.start_date.minute,
-#             )
-#             end_day = datetime.datetime(
-#                 now.year,
-#                 now.month,
-#                 now.day,
-#                 work_day.end_date.hour,
-#                 work_day.end_date.minute,
-#             )
-#             return f"{start_day.strftime('%H:%M')}—{end_day.strftime('%H:%M')}"
-#         return "Выходной"
-#
-#     def get_work_time(self, obj):
-#         weeks = [
-#             "Понедельник",
-#             "Вторник",
-#             "Среда",
-#             "Четверг",
-#             "Пятница",
-#             "Суббота",
-#             "Воскресенье",
-#         ]
-#         data = []
-#         for week in weeks:
-#             work_day = obj.work_time.filter(week_name=week).first()
-#             if work_day:
-#                 data.append(
-#                     {
-#                         "name": week,
-#                         "time": f"{work_day.start_date.strftime('%H:%M')}—{work_day.end_date.strftime('%H:%M')}",
-#                     }
-#                 )
-#         return data
-#
-#     def get_images(self, obj):
-#         data = []
-#         images = obj.images.all()
-#         domain = Site.objects.first().domain
-#         for image in images:
-#             data.append({"uri": f"{domain}{image.path.url}"})
-#
-#         return data
-#
-#     class Meta:
-#         model = Location
-#         fields = (
-#             "id",
-#             "name",
-#             "address",
-#             "description",
-#             "category",
-#             "phone",
-#             "email",
-#             "images",
-#             "is_open",
-#             "work_time_today",
-#             "work_time",
-#         )
+        read_only_fields = fields

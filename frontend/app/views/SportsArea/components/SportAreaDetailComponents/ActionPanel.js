@@ -5,8 +5,9 @@ import {
 } from "../../../../modules/Theme/colors";
 import { Ionicons } from "@expo/vector-icons";
 import { useColorScheme } from "react-native";
+import ActionButton from "./ActionButton";
 
-export default function ActionPanel({ isBlocked, last_status }) {
+export default function ActionPanel({ isBlocked, last_status, id }) {
   const colorScheme = useColorScheme();
   console.log(isBlocked);
   return (
@@ -29,24 +30,7 @@ export default function ActionPanel({ isBlocked, last_status }) {
           </Text>
         </HStack>
       </Box>
-      <Box
-        style={{
-          width: "49%",
-          height: 65,
-          borderRadius: 12,
-          paddingHorizontal: 24,
-        }}
-        _light={{ backgroundColor: COLORS_LIGHT_THEME.WHITE_BLOCK }}
-        _dark={{ backgroundColor: COLORS_DARK_THEME.DARK_BLOCK }}
-        justifyContent={"center"}
-      >
-        <HStack justifyContent={"center"} space={2} alignItems={"center"}>
-          <Ionicons name="ios-list" size={24} color={"#007AFF"} />
-          <Text color={"#007AFF"} fontWeight={600} fontSize={16}>
-            Действия
-          </Text>
-        </HStack>
-      </Box>
+      <ActionButton last_status={last_status} id={id} isBlocked={isBlocked} />
     </HStack>
   );
 }
