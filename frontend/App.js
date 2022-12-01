@@ -20,10 +20,8 @@ const persistor = persistStore(store);
 
 moment().locale("ru");
 
-// YaMap.init("17c14e60-a291-4fe6-a7d7-836024c48762");
-
 export default function App() {
-  //persistor.purge();
+  // persistor.purge();
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>

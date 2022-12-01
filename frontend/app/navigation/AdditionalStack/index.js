@@ -3,7 +3,6 @@ import TabBarNavigator from "../TabBarNavigator";
 import { PROFILE_ROUTE } from "../../modules/NavigationRoutes/profile";
 import AddPersonalData from "../../views/AddPersonalData";
 import Settings from "../../views/Settings";
-import LogoutButton from "../components/LogoutButton";
 import {
   COLORS_DARK_THEME,
   COLORS_LIGHT_THEME,
@@ -19,6 +18,7 @@ import CheckDataView from "../../views/AddSportArea/CheckDataView";
 import { SPORT_AREA } from "../../modules/NavigationRoutes/sportArea";
 import SportAreaDetailView from "../../views/SportsArea/SportAreaDetailView";
 import SportAreaStatusHistory from "../../views/SportsArea/SportAreaStatusHistory";
+import LogoutButton from "../components/LogoutButton";
 
 export const addSportAreaContext = createContext();
 
@@ -133,7 +133,7 @@ export default function AdditionalStackNavigator() {
           initialParams={{ header: PROFILE_ROUTE.SETTINGS.title }}
           options={{
             headerShown: true,
-            presentation: "modal",
+            // presentation: "modal",
             title: PROFILE_ROUTE.SETTINGS.title,
             headerRight: () => <LogoutButton />,
             headerBackTitle: "Назад",

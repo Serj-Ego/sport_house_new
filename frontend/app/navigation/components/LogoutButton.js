@@ -19,7 +19,7 @@ export default function LogoutButton() {
       });
   };
   return (
-    <TouchableOpacity style={{ width: "100%", padding: 10 }} onPress={onLogout}>
+    <TouchableOpacity style={{ padding: 10 }} onPress={onLogout}>
       <Icon
         as={Ionicons}
         size={7}

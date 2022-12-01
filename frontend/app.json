@@ -11,10 +11,11 @@
     "splash": {
       "image": "./app/assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#ffa160"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/735d11f2-cd77-408a-ab2e-d2dff96523dd"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -26,6 +27,15 @@
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera",
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
       }
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "735d11f2-cd77-408a-ab2e-d2dff96523dd"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
+    "android": {}
   }
 }

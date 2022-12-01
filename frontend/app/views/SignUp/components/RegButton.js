@@ -2,11 +2,11 @@ import { LinearGradient } from "expo-linear-gradient";
 import { PRIMARY_GRADIENT } from "../../../modules/Theme/colors";
 import { PADDING_LR_MAIN } from "../../../modules/Theme/padding";
 import { HStack, Text } from "native-base";
-import { TouchableOpacity } from "react-native";
+import { ActivityIndicator, TouchableOpacity } from "react-native";
 
-export default function RegButton({ onRegistration }) {
+export default function RegButton({ onRegistration, loading }) {
   return (
-    <TouchableOpacity onPress={onRegistration}>
+    <TouchableOpacity onPress={onRegistration} disabled={loading}>
       <LinearGradient
         colors={[PRIMARY_GRADIENT.START, PRIMARY_GRADIENT.END]}
         start={{ x: 1, y: 1 }}
@@ -20,15 +20,19 @@ export default function RegButton({ onRegistration }) {
           padding: PADDING_LR_MAIN,
         }}
       >
-        <HStack space={2}>
-          <Text
-            _light={{ color: "white" }}
-            _dark={{ color: "white" }}
-            fontWeight={"extrabold"}
-          >
-            Регистрация
-          </Text>
-        </HStack>
+        {loading ? (
+          <ActivityIndicator />
+        ) : (
+          <HStack space={2}>
+            <Text
+              _light={{ color: "white" }}
+              _dark={{ color: "white" }}
+              fontWeight={"extrabold"}
+            >
+              Регистрация
+            </Text>
+          </HStack>
+        )}
       </LinearGradient>
     </TouchableOpacity>
   );

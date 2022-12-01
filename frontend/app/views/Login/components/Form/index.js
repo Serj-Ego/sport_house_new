@@ -9,7 +9,7 @@ import PasswordInput from "./components/PasswordInput";
 import EmailInput from "./components/EmailInput";
 import ResetPasswordButton from "./components/ResetPasswordButton";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Alert } from "react-native";
+import { Alert } from "react-native";
 import { useDispatch } from "react-redux";
 import { LoginApiRequest } from "../../../../services/redux/slices/userSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
@@ -75,7 +75,7 @@ export default function Form() {
         setPassword={setPassword}
       />
       <HStack space={4}>
-        {loading ? <ActivityIndicator /> : <LoginButton onLogin={onLogin} />}
+        <LoginButton onLogin={onLogin} loading={loading} />
         <RegistrationButton />
       </HStack>
       <ResetPasswordButton />
