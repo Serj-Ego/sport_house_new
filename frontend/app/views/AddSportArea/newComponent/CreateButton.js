@@ -40,6 +40,8 @@ export default function CreateButton() {
       email: context.email,
       web_site: context.webSite,
       keywords: context.keywords,
+      max_member: context.maxMembers,
+      max_viewer: context.maxViewer,
     };
   };
   const clearContext = () => {
@@ -73,6 +75,8 @@ export default function CreateButton() {
     context.setEmail("");
     context.setWebSite("");
     context.setKeyWords([]);
+    context.setMaxViewer(0);
+    context.setMaxMembers(0);
   };
   return (
     <View>

@@ -140,6 +140,8 @@ class LocationCreateSerializer(serializers.ModelSerializer):
             "email",
             "web_site",
             "keywords",
+            "max_member",
+            "max_viewer",
         )
 
 
@@ -157,13 +159,7 @@ class LocationOwnerListSerializer(serializers.ModelSerializer):
             "description",
             "last_status",
         )
-        read_only_fields = (
-            "id",
-            "full_name",
-            "short_name",
-            "description",
-            "last_status",
-        )
+        read_only_fields = fields
 
 
 class WorkTimeLocationSerializer(serializers.ModelSerializer):
@@ -271,5 +267,7 @@ class LocationRetrieveOwnerSerializer(serializers.ModelSerializer):
             "owner",
             "created_date",
             "is_blocked",
+            "max_member",
+            "max_viewer",
         )
         read_only_fields = fields

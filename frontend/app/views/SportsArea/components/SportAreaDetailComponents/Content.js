@@ -166,6 +166,14 @@ export default function Content({ y, data }) {
             <Heading size={"sm"}>{data.squad} м2</Heading>
           </DetailBlock>
         </HStack>
+        <HStack space={"2%"}>
+          <DetailBlock title={"Участников"} width={"49%"}>
+            <Heading size={"sm"}>{data.max_member} чел.</Heading>
+          </DetailBlock>
+          <DetailBlock title={"Зрителей"} width={"49%"}>
+            <Heading size={"sm"}>{data.max_viewer} чел.</Heading>
+          </DetailBlock>
+        </HStack>
         <DetailBlock title={"Номер телефона"}>
           <Heading size={"sm"}>{data.phone}</Heading>
         </DetailBlock>

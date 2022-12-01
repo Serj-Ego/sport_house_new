@@ -40,6 +40,8 @@ export default function CheckDataView({ navigation }) {
     optionsZone,
     phoneNumber,
     email,
+    maxMembers,
+    maxViewer,
   } = useContext(addSportAreaContext);
   useEffect(() => {
     let errors = [];
@@ -87,6 +89,12 @@ export default function CheckDataView({ navigation }) {
     }
     if (email.length === 0) {
       errors.push("Укажите электронный адрес");
+    }
+    if (maxMembers === 0) {
+      errors.push("Укажите количество участников");
+    }
+    if (maxViewer === 0) {
+      errors.push("Укажите количество зрителей");
     }
     setTimeout(() => {
       setErrorList(errors);

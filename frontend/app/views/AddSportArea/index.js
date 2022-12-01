@@ -16,6 +16,7 @@ import SportAreaCovered from "./newComponent/SportAreaCovered";
 import SportAreaOptions from "./newComponent/SportAreaOptions";
 import SportAreaContacts from "./newComponent/SportAreaContacts";
 import SportAreaKeyWords from "./newComponent/SportAreaKeyWords";
+import SportAreaMaxPeople from "./newComponent/SportAreaMaxPeople";
 
 export default function AddSportArea() {
   const refSlider = useRef(null);
@@ -33,6 +34,7 @@ export default function AddSportArea() {
     { component: <SportAreaWorkTime /> },
     { component: <SportAreaPrice /> },
     { component: <SportAreaSquad /> },
+    { component: <SportAreaMaxPeople /> },
     { component: <SportAreaFlatLight /> },
     { component: <SportAreaCategory /> },
     { component: <SportAreaSportType /> },

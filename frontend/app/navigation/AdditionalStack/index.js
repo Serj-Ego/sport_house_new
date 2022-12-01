@@ -57,6 +57,8 @@ export default function AdditionalStackNavigator() {
   const [email, setEmail] = useState("");
   const [webSite, setWebSite] = useState("");
   const [keywords, setKeyWords] = useState([]);
+  const [maxMembers, setMaxMembers] = useState(0);
+  const [maxViewer, setMaxViewer] = useState(0);
   const state = {
     fullName,
     shortName,
@@ -80,6 +82,8 @@ export default function AdditionalStackNavigator() {
     email,
     webSite,
     keywords,
+    maxMembers,
+    maxViewer,
     setFullName,
     setShortName,
     setDescription,
@@ -102,6 +106,8 @@ export default function AdditionalStackNavigator() {
     setEmail,
     setWebSite,
     setKeyWords,
+    setMaxMembers,
+    setMaxViewer,
   };
   //___________________________________________//
 

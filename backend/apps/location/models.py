@@ -231,6 +231,12 @@ class Location(models.Model):
         related_name="managers",
     )
     is_blocked = models.BooleanField("Блокировка", default=False)
+    max_member = models.PositiveIntegerField(
+        "Максимальное количество участников", default=0
+    )
+    max_viewer = models.PositiveIntegerField(
+        "Максимальное количество зрителей", default=0
+    )
 
     def add_status(self, user: User, status_name: str, commentary=""):
         """
