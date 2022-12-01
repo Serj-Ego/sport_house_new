@@ -7,6 +7,7 @@ let initialState = {
     latitude: 55.75321,
     longitude: 37.619055,
   },
+  userAddAllInfo: false,
 };
 
 /**
@@ -37,11 +38,16 @@ const baseSlice = createSlice({
     setUserLocation: (state, action) => {
       state.userLocation = action.payload;
     },
+    setUserAddAllInfo: (state, action) => {
+      state.userAddAllInfo = action.payload;
+    },
   },
   extraReducers: {},
 });
 export default baseSlice.reducer;
 
-export const { setCompleteOnboarding, setUserLocation } = baseSlice.actions;
+export const { setCompleteOnboarding, setUserLocation, setUserAddAllInfo } =
+  baseSlice.actions;
 export const completeOnboarding = (state) => state.base.completeOnboarding;
 export const userLocation = (state) => state.base.userLocation;
+export const userAddAllInfo = (state) => state.base.userAddAllInfo;

@@ -11,7 +11,7 @@ import { useDispatch } from "react-redux";
 import { RegistrationUserApiRequest } from "../../services/redux/slices/userSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 
-export default function SignUp() {
+export default function SignUp({ route }) {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
@@ -28,8 +28,8 @@ export default function SignUp() {
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState();
 
-  const [role, setRole] = useState("");
-  const [roleError, setRoleError] = useState();
+  const [passwordRepeat, setPasswordRepeat] = useState("");
+  const [passwordRepeatError, setPasswordRepeatError] = useState();
 
   const onRegistration = () => {
     let regEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
@@ -38,8 +38,8 @@ export default function SignUp() {
       regEmail.test(email) &&
       // lastName.length > 0 &&
       // firstName.length > 0 &&
-      password.length > 7
-      // role.length > 0
+      password.length > 7 &&
+      password === passwordRepeat
     ) {
       setEmailError(false);
       // setLastNameError(false);
@@ -52,7 +52,7 @@ export default function SignUp() {
           // last_name: lastName,
           // first_name: firstName,
           password: password,
-          // role: role,
+          role: route.params.role,
         })
       )
         .then(unwrapResult)
@@ -70,26 +70,18 @@ export default function SignUp() {
       } else {
         setEmailError(false);
       }
-      // if (lastName.length === 0) {
-      //   setLastNameError(true);
-      // } else {
-      //   setLastNameError(false);
-      // }
-      // if (firstName.length === 0) {
-      //   setFirstNameError(true);
-      // } else {
-      //   setFirstNameError(false);
-      // }
       if (password.length < 8) {
         setPasswordError(true);
       } else {
         setPasswordError(false);
       }
-      // if (role.length < 1) {
-      //   setRoleError(true);
-      // } else {
-      //   setRoleError(false);
-      // }
+      if (password !== passwordRepeat) {
+        setPasswordRepeatError(true);
+        setPasswordError(true);
+      } else {
+        setPasswordRepeatError(false);
+        setPasswordError(false);
+      }
     }
   };
   return (
@@ -124,6 +116,12 @@ export default function SignUp() {
           password={password}
           setPassword={setPassword}
           passwordError={passwordError}
+        />
+        <Password
+          password={passwordRepeat}
+          setPassword={setPasswordRepeat}
+          passwordError={passwordRepeatError}
+          placeholder={"Подтверждение пароля"}
         />
         {/*<RegistrationAs role={role} setRole={setRole} roleError={roleError} />*/}
         {loading ? (

@@ -15,15 +15,23 @@ import { RoleConst } from "../../modules/RoleConst";
 import SportArea from "./SportArea";
 import { Skeleton, Text } from "native-base";
 import * as Location from "expo-location";
-import { setUserLocation } from "../../services/redux/slices/baseSlice";
+import {
+  setUserLocation,
+  userAddAllInfo,
+} from "../../services/redux/slices/baseSlice";
 import { HEIGHT } from "../../modules/Theme/dimensions";
+import { PROFILE_ROUTE } from "../../modules/NavigationRoutes/profile";
 
-export default function Profile({ route }) {
+export default function Profile({ route, navigation }) {
   const dispatch = useDispatch();
   const userId = useSelector(userLoginData);
   const userDataState = useSelector(userInfoData);
   const isFocused = useIsFocused();
   const [isLoading, setIsLoading] = useState(false);
+  const stateUserAddAllInfo = useSelector(userAddAllInfo);
+  if (!stateUserAddAllInfo) {
+    navigation.navigate(PROFILE_ROUTE.USER_INIT_PARAMS.route);
+  }
   useEffect(() => {
     if (isFocused) {
       setIsLoading(true);

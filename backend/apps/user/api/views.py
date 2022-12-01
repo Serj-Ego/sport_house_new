@@ -8,8 +8,7 @@ from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from apps.user.tasks import send_email_confirm_code
-from apps.ai.tasks import calculate_recomendation
+
 from apps.base.models import File
 from apps.user.api.serializers import (
     UploadUserAvatarSerializer,
@@ -23,6 +22,7 @@ from apps.user.models import (
     UserReccomendationInfo,
     User,
 )
+from apps.user.tasks import send_email_confirm_code
 
 
 class CustomAuthToken(ObtainAuthToken):
@@ -99,6 +99,8 @@ class UpdateUserInfoAPIView(APIView):
                 )
             else:
                 user.username = username
+        if notification_token := request.data.get("notification_token", None):
+            user.notification_token = notification_token
         user.save()
 
         return Response(

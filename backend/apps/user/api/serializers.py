@@ -1,5 +1,6 @@
 import random
 
+from django.contrib.auth.models import Group
 from rest_framework import serializers
 
 from apps.base.models import File, FileType, FileTypeConst, PhysicalTraining
@@ -183,7 +184,7 @@ class RegistrationUserSerializer(serializers.ModelSerializer):
             is_active=False,
             confirm_code=code,
         )
-        # instance.groups.add(Group.objects.get(name=self.initial_data.get("role")))
+        instance.groups.add(Group.objects.get(name=self.initial_data.get("role")))
         send_email_confirm_code.apply_async(
             kwargs={"email": instance.email, "code": code}
         )

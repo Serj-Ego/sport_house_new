@@ -21,4 +21,9 @@ export const PROFILE_ROUTE = {
     route: "sport_area_check_data",
     title: "Проверка введенных данных",
   },
+
+  USER_INIT_PARAMS: {
+    route: "user_initial_params",
+    title: "Ввод начальных данных пользователя",
+  },
 };

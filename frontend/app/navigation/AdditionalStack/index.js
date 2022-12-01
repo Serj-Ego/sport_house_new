@@ -19,6 +19,7 @@ import { SPORT_AREA } from "../../modules/NavigationRoutes/sportArea";
 import SportAreaDetailView from "../../views/SportsArea/SportAreaDetailView";
 import SportAreaStatusHistory from "../../views/SportsArea/SportAreaStatusHistory";
 import LogoutButton from "../components/LogoutButton";
+import InitialUserParams from "../../views/Profile/InitialUserParams";
 
 export const addSportAreaContext = createContext();
 
@@ -122,7 +123,7 @@ export default function AdditionalStackNavigator() {
           initialParams={{ header: PROFILE_ROUTE.ADD_PERSONAL_DATA.title }}
           options={{
             headerShown: false,
-            presentation: "modal",
+            stackPresentation: "modal",
             // gestureEnabled: false,
             // headerLargeTitle: true,
           }}
@@ -183,7 +184,7 @@ export default function AdditionalStackNavigator() {
           }}
           options={{
             headerShown: true,
-            presentation: "modal",
+            stackPresentation: "modal",
             title: PROFILE_ROUTE.SELECT_SPORT_AREA_ADDRESS.title,
             headerBackTitle: "Отмена",
             headerTitleStyle: {
@@ -208,7 +209,7 @@ export default function AdditionalStackNavigator() {
           }}
           options={{
             headerShown: false,
-            presentation: "modal",
+            stackPresentation: "modal",
             gestureEnabled: false,
             headerBackTitle: "",
             title: PROFILE_ROUTE.SPORT_AREA_CHECK_DATA.title,
@@ -284,6 +285,15 @@ export default function AdditionalStackNavigator() {
                   ? COLORS_LIGHT_THEME.BACKGROUND
                   : COLORS_DARK_THEME.BACKGROUND,
             },
+          }}
+        />
+        <Index.Screen
+          name={PROFILE_ROUTE.USER_INIT_PARAMS.route}
+          component={InitialUserParams}
+          options={{
+            headerShown: false,
+            gestureEnabled: false,
+            stackPresentation: "transparentModal",
           }}
         />
       </Index.Navigator>

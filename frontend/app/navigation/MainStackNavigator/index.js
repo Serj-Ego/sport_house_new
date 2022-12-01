@@ -20,6 +20,7 @@ import {
 import React, { useEffect } from "react";
 import * as Notifications from "expo-notifications";
 import AdditionalStackNavigator from "../AdditionalStack";
+import SelectRole from "../../views/SelectRole";
 
 const MainStack = createStackNavigator();
 
@@ -62,6 +63,28 @@ export default function MainStackNavigator() {
             name={MAIN_ROUTES.LOGIN}
             component={Login}
             options={{ headerShown: false, gestureEnabled: false }}
+          />
+          <MainStack.Screen
+            name={MAIN_ROUTES.SET_ROLE}
+            component={SelectRole}
+            options={{
+              headerShown: true,
+              headerBackTitle: "Назад",
+              title: "Выбор роли",
+              // presentation: "modal",
+              headerTitleStyle: {
+                color:
+                  colorScheme === "light"
+                    ? COLORS_LIGHT_THEME.TEXT
+                    : COLORS_DARK_THEME.TEXT,
+              },
+              headerStyle: {
+                backgroundColor:
+                  colorScheme === "light"
+                    ? COLORS_LIGHT_THEME.BACKGROUND
+                    : COLORS_DARK_THEME.BACKGROUND,
+              },
+            }}
           />
           <MainStack.Screen
             name={MAIN_ROUTES.SIGNUP}

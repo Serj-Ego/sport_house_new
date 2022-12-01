@@ -4,9 +4,14 @@ import {
   COLORS_LIGHT_THEME,
   ERROR,
 } from "../../../modules/Theme/colors";
-import { Input, Text } from "native-base";
+import { Input } from "native-base";
 
-export default function Password({ password, passwordError, setPassword }) {
+export default function Password({
+  password,
+  passwordError,
+  setPassword,
+  placeholder = "Пароль",
+}) {
   return (
     <>
       <Input
@@ -20,7 +25,7 @@ export default function Password({ password, passwordError, setPassword }) {
         fontWeight={"bold"}
         fontSize={16}
         secureTextEntry={true}
-        placeholder={"Пароль"}
+        placeholder={placeholder}
         placeholderTextColor={COLORS_FORM.PLACEHOLDER}
         clearButtonMode="always"
         _focus={{
@@ -48,11 +53,11 @@ export default function Password({ password, passwordError, setPassword }) {
           setPassword(value);
         }}
       />
-      {passwordError && (
-        <Text marginBottom={4} textAlign={"center"} color={ERROR.FLAT}>
-          Пароль должен состоять минимум из 8 символов
-        </Text>
-      )}
+      {/*{passwordError && (*/}
+      {/*  <Text marginBottom={4} textAlign={"center"} color={ERROR.FLAT}>*/}
+      {/*    Пароль должен состоять минимум из 8 символов*/}
+      {/*  </Text>*/}
+      {/*)}*/}
     </>
   );
 }
