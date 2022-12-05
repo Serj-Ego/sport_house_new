@@ -60,7 +60,7 @@ class LocationCreateSerializer(serializers.ModelSerializer):
     lighting = serializers.CharField()
     coating = serializers.CharField()
     category = serializers.CharField()
-    sport_type = serializers.CharField()
+    sport_type = serializers.ListField()
     options = serializers.ListField()
     keywords = serializers.ListField()
 
@@ -69,6 +69,7 @@ class LocationCreateSerializer(serializers.ModelSerializer):
         work_time = validated_data.pop("work_time", None)
         options = validated_data.pop("options", None)
         keywords = validated_data.pop("keywords", None)
+        sport_types = validated_data.pop("sport_type", None)
 
         validated_data["address"] = LocationAddress.objects.create(
             **validated_data.pop("address", None)
@@ -81,9 +82,6 @@ class LocationCreateSerializer(serializers.ModelSerializer):
         )
         validated_data["category"] = LocationCategory.objects.get(
             name=validated_data.pop("category", None)
-        )
-        validated_data["sport_type"] = LocationSportType.objects.get(
-            name=validated_data.pop("sport_type", None)
         )
         validated_data["owner"] = self.context.get("user")
         location: Location = super().create(validated_data)
@@ -111,6 +109,10 @@ class LocationCreateSerializer(serializers.ModelSerializer):
         for keyword in keywords:
             kw, _ = LocationKeyWords.objects.get_or_create(name=keyword)
             location.keywords.add(kw)
+
+        for sport_type in sport_types:
+            inst = LocationSportType.objects.get(name=sport_type)
+            location.sport_type.add(inst)
 
         location.add_status(self.context.get("user"), StatusConst.CREATED)
         return location
@@ -182,6 +184,14 @@ class OptionsSerializer(serializers.ModelSerializer):
         fields = ("name",)
 
 
+class SportTypeSerializer(serializers.ModelSerializer):
+    """Сериализатор видов спорта площадки"""
+
+    class Meta:
+        model = LocationSportType
+        fields = ("name",)
+
+
 class KeyWordsSerializer(serializers.ModelSerializer):
     """Сериализатор ключевых слов площадки"""
 
@@ -211,7 +221,7 @@ class LocationRetrieveOwnerSerializer(serializers.ModelSerializer):
     lighting = serializers.CharField(source="lighting.name", read_only=True)
     coating = serializers.CharField(source="coating.name", read_only=True)
     category = serializers.CharField(source="category.name", read_only=True)
-    sport_type = serializers.CharField(source="sport_type.name", read_only=True)
+    sport_type = SportTypeSerializer(many=True, read_only=True)
     options = OptionsSerializer(many=True, read_only=True)
     keywords = KeyWordsSerializer(many=True, read_only=True)
     owner = serializers.CharField(source="owner.get_full_name", read_only=True)

@@ -127,8 +127,14 @@ export default function Content({ y, data }) {
         <DetailBlock title={"Категория"}>
           <Heading size={"sm"}>{data.category}</Heading>
         </DetailBlock>
-        <DetailBlock title={"Вид спорта"}>
-          <Heading size={"sm"}>{data.sport_type}</Heading>
+        <DetailBlock title={"Виды спорта"}>
+          {data.sport_type.map((value, index) => {
+            return (
+              <Heading key={index} size={"sm"}>
+                {value.name}
+              </Heading>
+            );
+          })}
         </DetailBlock>
         <DetailBlock title={"Покрытие"}>
           <Heading size={"sm"}>{data.coating}</Heading>

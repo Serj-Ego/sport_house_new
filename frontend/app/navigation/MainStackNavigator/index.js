@@ -3,7 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { MAIN_ROUTES } from "../../modules/NavigationRoutes/main";
 import Onboarding from "../../views/Onboarding";
 import { completeOnboarding } from "../../services/redux/slices/baseSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Login from "../../views/Login";
 import SignUp from "../../views/SignUp";
 import { useColorScheme } from "react-native";
@@ -13,11 +13,8 @@ import {
 } from "../../modules/Theme/colors";
 import ConfirmedSignUp from "../../views/ConfirmedSignUp";
 import SuccessSignUp from "../../views/SuccessSignUp";
-import {
-  UpdateNotificationTokenApiRequest,
-  userLoginData,
-} from "../../services/redux/slices/userSlice";
-import React, { useEffect } from "react";
+import { userLoginData } from "../../services/redux/slices/userSlice";
+import React from "react";
 import * as Notifications from "expo-notifications";
 import AdditionalStackNavigator from "../AdditionalStack";
 import SelectRole from "../../views/SelectRole";
@@ -36,15 +33,6 @@ export default function MainStackNavigator() {
   const userLoginDataSelector = useSelector(userLoginData);
   const colorScheme = useColorScheme();
   const viewOnboardingScreen = useSelector(completeOnboarding);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (userLoginDataSelector.token) {
-      registerForPushNotificationsAsync().then((token) =>
-        dispatch(UpdateNotificationTokenApiRequest({ token: token }))
-      );
-    }
-  }, [userLoginDataSelector]);
 
   return (
     <NavigationContainer>
@@ -158,27 +146,4 @@ export default function MainStackNavigator() {
       )}
     </NavigationContainer>
   );
-}
-
-async function registerForPushNotificationsAsync() {
-  let token;
-  const { status: existingStatus } = await Notifications.getPermissionsAsync();
-  let finalStatus = existingStatus;
-  if (existingStatus !== "granted") {
-    const { status } = await Notifications.requestPermissionsAsync({
-      ios: {
-        allowAlert: true,
-        allowBadge: true,
-        allowSound: true,
-        allowDisplayInCarPlay: true,
-        allowCriticalAlerts: true,
-        provideAppNotificationSettings: true,
-        allowProvisional: true,
-        allowAnnouncements: true,
-      },
-    });
-    finalStatus = status;
-  }
-  token = (await Notifications.getExpoPushTokenAsync()).data;
-  return token;
 }

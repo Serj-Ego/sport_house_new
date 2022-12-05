@@ -14,7 +14,6 @@ class LocationAdmin(admin.ModelAdmin):
     list_display = (
         "full_name",
         "category",
-        "sport_type",
         "get_last_status",
         "is_blocked",
         "location_actions",
@@ -29,6 +28,7 @@ class LocationAdmin(admin.ModelAdmin):
     filter_horizontal = (
         "images",
         "work_time",
+        # "sport_type",
         "options",
         "keywords",
     )
@@ -36,7 +36,6 @@ class LocationAdmin(admin.ModelAdmin):
     list_filter = (
         "is_blocked",
         "category",
-        "sport_type",
     )
 
     fieldsets = (
@@ -72,7 +71,7 @@ class LocationAdmin(admin.ModelAdmin):
                     "lighting",
                     "coating",
                     "category",
-                    "sport_type",
+                    # "sport_type",
                     "is_covered",
                     "options",
                 )

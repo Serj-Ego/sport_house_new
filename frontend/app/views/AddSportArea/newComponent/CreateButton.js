@@ -66,7 +66,7 @@ export default function CreateButton() {
     context.setLighting("");
     context.setCoating("");
     context.setCategory("");
-    context.setSportTypes("");
+    context.setSportTypes([]);
     context.setIsCovered(false);
     context.setOptionsZone([]);
     context.setPhoneNumber("");

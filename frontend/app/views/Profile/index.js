@@ -29,7 +29,11 @@ export default function Profile({ route, navigation }) {
   const isFocused = useIsFocused();
   const [isLoading, setIsLoading] = useState(false);
   const stateUserAddAllInfo = useSelector(userAddAllInfo);
-  if (!stateUserAddAllInfo) {
+  if (
+    !stateUserAddAllInfo ||
+    (userDataState.first_name.length === 0 &&
+      userDataState.last_name.length === 0)
+  ) {
     navigation.navigate(PROFILE_ROUTE.USER_INIT_PARAMS.route);
   }
   useEffect(() => {

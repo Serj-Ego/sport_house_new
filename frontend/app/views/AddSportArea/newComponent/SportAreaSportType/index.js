@@ -1,4 +1,4 @@
-import { Heading, HStack, Image, Text, View } from "native-base";
+import { Box, Heading, HStack, Icon, Image, Text, View } from "native-base";
 import { HEIGHT, WIDTH } from "../../../../modules/Theme/dimensions";
 import React, { useContext, useEffect, useState } from "react";
 import { addSportAreaContext } from "../../../../navigation/AdditionalStack";
@@ -6,18 +6,16 @@ import { useDispatch } from "react-redux";
 import { unwrapResult } from "@reduxjs/toolkit";
 import {
   ActionSheetIOS,
+  Alert,
   TouchableWithoutFeedback,
   useColorScheme,
 } from "react-native";
-import {
-  COLORS_DARK_THEME,
-  COLORS_FORM,
-  COLORS_LIGHT_THEME,
-} from "../../../../modules/Theme/colors";
-import { Spacer } from "native-base/src/components/primitives/Flex";
-import { Octicons } from "@expo/vector-icons";
+import { COLOR_ACCENT, ERROR } from "../../../../modules/Theme/colors";
 import { BaseDirectoryApiRequest } from "../../../../services/redux/slices/baseSlice";
 import { DirectoryTypeConst } from "../../../../modules/DirectoryTypeConst";
+import { PADDING_LR_MAIN } from "../../../../modules/Theme/padding";
+import { Spacer } from "native-base/src/components/primitives/Flex";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function SportAreaSportType() {
   const dispatch = useDispatch();
@@ -45,9 +43,21 @@ export default function SportAreaSportType() {
       },
       (buttonIndex) => {
         if (buttonIndex === 0) {
-          setSportTypes("");
+          setSportTypes(sportTypes);
         } else {
-          setSportTypes(sportTypeList[buttonIndex]);
+          if (sportTypes.length === 3) {
+            Alert.alert(
+              "Внимание!",
+              "Вы выбрали максимальное количество видов спорта!"
+            );
+          } else {
+            if (sportTypes.includes(sportTypeList[buttonIndex])) {
+              Alert.alert(
+                "Внимание!",
+                `Вы уже добавили "${sportTypeList[buttonIndex]}"!`
+              );
+            } else setSportTypes([...sportTypes, sportTypeList[buttonIndex]]);
+          }
         }
       }
     );
@@ -61,52 +71,77 @@ export default function SportAreaSportType() {
         size={HEIGHT / 4}
       />
       <View style={{ width: WIDTH, paddingHorizontal: 12 }}>
-        <Heading>Вид спорта на объекте</Heading>
-        <TouchableWithoutFeedback onPress={onPress}>
-          <View
-            height={55}
-            marginBottom={4}
-            marginTop={4}
-            width={"100%"}
-            borderRadius={12}
-            paddingLeft={6}
-            paddingRight={6}
-            justifyContent={"center"}
-            _light={{
-              backgroundColor: COLORS_FORM.INPUT,
-              color: COLORS_LIGHT_THEME.TEXT,
-            }}
-            _dark={{
-              color: COLORS_DARK_THEME.TEXT,
-              backgroundColor: COLORS_FORM.DARK_INPUT,
-            }}
-          >
-            <HStack space={2}>
-              <Text
-                fontSize={16}
-                _light={{
-                  color: sportTypes
-                    ? COLORS_LIGHT_THEME.TEXT
-                    : COLORS_FORM.PLACEHOLDER,
-                }}
-                _dark={{
-                  color: sportTypes
-                    ? COLORS_DARK_THEME.TEXT
-                    : COLORS_FORM.PLACEHOLDER,
-                }}
-                fontWeight={"bold"}
-              >
-                {sportTypes ? sportTypes : "Вид спорта"}
-              </Text>
-              <Spacer />
-              <Octicons
-                name="chevron-down"
-                size={24}
-                color={COLORS_FORM.PLACEHOLDER}
-              />
-            </HStack>
-          </View>
-        </TouchableWithoutFeedback>
+        <Heading>Виды спорта на объекте</Heading>
+        <Text color={"gray.500"}>Максимальное для выбора количество: 3</Text>
+        {sportTypes.length < 3 && (
+          <TouchableWithoutFeedback onPress={onPress}>
+            <Box
+              style={{
+                marginTop: 12,
+                borderStyle: "solid",
+                borderWidth: 1,
+                width: "100%",
+                height: 55,
+                borderRadius: 12,
+                alignItems: "center",
+                justifyContent: "center",
+                padding: PADDING_LR_MAIN,
+              }}
+              _light={{
+                borderColor: COLOR_ACCENT.ACCENT,
+              }}
+              _dark={{
+                borderColor: "white",
+              }}
+            >
+              <HStack space={2}>
+                <Text
+                  _light={{ color: COLOR_ACCENT.ACCENT }}
+                  _dark={{ color: "white" }}
+                >
+                  Добавить
+                </Text>
+              </HStack>
+            </Box>
+          </TouchableWithoutFeedback>
+        )}
+        {sportTypes.map((value, index) => {
+          return (
+            <Box
+              style={{
+                borderStyle: "solid",
+                borderRadius: 12,
+                borderColor: "gray",
+                borderWidth: 1,
+                height: 55,
+                justifyContent: "center",
+                marginVertical: 4,
+                paddingHorizontal: 12,
+              }}
+              key={index}
+            >
+              <HStack alignItems={"center"}>
+                <Heading size={"sm"} textAlign={"center"}>
+                  {value}
+                </Heading>
+                <Spacer />
+                <TouchableWithoutFeedback
+                  onPress={() => {
+                    setSportTypes(sportTypes.filter((el) => el !== value));
+                  }}
+                >
+                  <Icon
+                    as={Ionicons}
+                    textAlign={"center"}
+                    size={7}
+                    name="ios-remove-circle"
+                    color={ERROR.FLAT}
+                  />
+                </TouchableWithoutFeedback>
+              </HStack>
+            </Box>
+          );
+        })}
       </View>
     </View>
   );

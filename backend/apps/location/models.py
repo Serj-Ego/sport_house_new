@@ -194,9 +194,7 @@ class Location(models.Model):
     category = models.ForeignKey(
         LocationCategory, verbose_name="Категория", on_delete=models.PROTECT
     )
-    sport_type = models.ForeignKey(
-        LocationSportType, verbose_name="Вид спорта", on_delete=models.PROTECT
-    )
+    sport_type = models.ManyToManyField(LocationSportType, verbose_name="Вид спорта")
     is_covered = models.BooleanField("Крытая площадка", default=False)
     options = models.ManyToManyField(
         LocationOptions, verbose_name="Опции спортивной площадки"

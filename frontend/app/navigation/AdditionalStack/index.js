@@ -47,7 +47,7 @@ export default function AdditionalStackNavigator() {
   const [lighting, setLighting] = useState("");
   const [coating, setCoating] = useState("");
   const [category, setCategory] = useState("");
-  const [sportTypes, setSportTypes] = useState("");
+  const [sportTypes, setSportTypes] = useState([]);
   const [isCovered, setIsCovered] = useState(false);
   const [optionsZone, setOptionsZone] = useState([]);
   const [phoneNumber, setPhoneNumber] = useState("");
