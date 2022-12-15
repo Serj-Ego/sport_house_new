@@ -22,6 +22,7 @@ moment().locale("ru");
 
 export default function App() {
   // persistor.purge();
+  // AsyncStorage.removeItem("token");
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>

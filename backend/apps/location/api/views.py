@@ -1,6 +1,7 @@
 # Create your views here.
 import json
 
+from django.db.models import Subquery, OuterRef
 from django.http import Http404
 from rest_framework import status
 from rest_framework.generics import (
@@ -12,15 +13,16 @@ from rest_framework.generics import (
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from apps.base.models import RoleConst
+from apps.base.models import RoleConst, StatusConst
 from apps.base.permissions import HasGroupPermission
 from apps.location.api.filters import LocationSearchFilter
 from apps.location.api.serializers import (
     LocationCreateSerializer,
     LocationOwnerListSerializer,
     LocationRetrieveOwnerSerializer,
+    LocationMapSerializer,
 )
-from apps.location.models import Location
+from apps.location.models import Location, ListLocationStatus
 
 
 class LocationCreateAPIView(CreateAPIView):
@@ -103,10 +105,18 @@ class LocationOwnerRetrieveAPIView(RetrieveAPIView):
             raise Http404
 
 
-# class LocationForUserListAPIView(ListAPIView):
-#     """Список спортивных площадок для пользователя на карте"""
-#
-#     permission_classes = (IsAuthenticated,)
-#     pagination_class = None
-#     queryset = Location.objects.all()
-#     serializer_class = LocationForUserSerializer
+class LocationUserMapListAPIView(ListAPIView):
+    """Список спортивных площадок на карте пользователя"""
+
+    permission_classes = (IsAuthenticated,)
+    pagination_class = None
+    serializer_class = LocationMapSerializer
+
+    def get_queryset(self):
+        return Location.objects.annotate(
+            last_status_name=Subquery(
+                ListLocationStatus.objects.filter(location=OuterRef("pk"))
+                .order_by("-created_date")
+                .values("status__name")[:1]
+            )
+        ).filter(last_status_name=StatusConst.PUBLISHED, is_blocked=False)

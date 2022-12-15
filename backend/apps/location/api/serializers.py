@@ -1,3 +1,5 @@
+import datetime
+
 from django.contrib.sites.models import Site
 from rest_framework import serializers
 
@@ -281,3 +283,136 @@ class LocationRetrieveOwnerSerializer(serializers.ModelSerializer):
             "max_viewer",
         )
         read_only_fields = fields
+
+
+class LocationMapSerializer(serializers.ModelSerializer):
+    """Сериализатор спортивных площадок на карте у пользователя"""
+
+    images = serializers.SerializerMethodField(read_only=True)
+    address = LocationAddressSerializer(read_only=True)
+    category = serializers.CharField(source="category.name", read_only=True)
+    options = OptionsSerializer(many=True, read_only=True)
+    work_time = serializers.SerializerMethodField()
+    is_open = serializers.SerializerMethodField()
+    work_time_today = serializers.SerializerMethodField()
+
+    def get_work_time_today(self, obj):
+        weeks = {
+            "Monday": "Понедельник",
+            "Tuesday": "Вторник",
+            "Wednesday": "Среда",
+            "Thursday": "Четверг",
+            "Friday": "Пятница",
+            "Saturday": "Суббота",
+            "Sunday": "Воскресенье",
+        }
+        now = datetime.datetime.now()
+        week_name_now = weeks[now.strftime("%A")]
+        work_day = obj.work_time.filter(week_name=week_name_now).first()
+        if work_day:
+            start_day = datetime.datetime(
+                now.year,
+                now.month,
+                now.day,
+                work_day.start_date.hour,
+                work_day.start_date.minute,
+            )
+            end_day = datetime.datetime(
+                now.year,
+                now.month,
+                now.day,
+                work_day.end_date.hour,
+                work_day.end_date.minute,
+            )
+            return f"{start_day.strftime('%H:%M')}—{end_day.strftime('%H:%M')}"
+        return "Выходной"
+
+    def get_is_open(self, obj):
+        weeks = {
+            "Monday": "Понедельник",
+            "Tuesday": "Вторник",
+            "Wednesday": "Среда",
+            "Thursday": "Четверг",
+            "Friday": "Пятница",
+            "Saturday": "Суббота",
+            "Sunday": "Воскресенье",
+        }
+        now = datetime.datetime.now()
+        week_name_now = weeks[now.strftime("%A")]
+        work_day = obj.work_time.filter(week_name=week_name_now).first()
+        if work_day:
+            start_day = datetime.datetime(
+                now.year,
+                now.month,
+                now.day,
+                work_day.start_date.hour,
+                work_day.start_date.minute,
+            )
+            end_day = datetime.datetime(
+                now.year,
+                now.month,
+                now.day,
+                work_day.end_date.hour,
+                work_day.end_date.minute,
+            )
+            return start_day <= now <= end_day
+        return False
+
+    def get_images(self, obj):
+        data = []
+        images = obj.images.all()
+        domain = Site.objects.first().domain
+        for image in images:
+            data.append({"uri": f"{domain}{image.path.url}"})
+
+        return data
+
+    def get_work_time(self, obj):
+        weeks = [
+            "Понедельник",
+            "Вторник",
+            "Среда",
+            "Четверг",
+            "Пятница",
+            "Суббота",
+            "Воскресенье",
+        ]
+        data = []
+        for week in weeks:
+            work_day = obj.work_time.filter(week_name=week).first()
+            if work_day:
+                if work_day.start_date and work_day.end_date:
+                    data.append(
+                        {
+                            "name": week,
+                            "time": f"{work_day.start_date.strftime('%H:%M')}—{work_day.end_date.strftime('%H:%M')}",
+                        }
+                    )
+                else:
+                    data.append(
+                        {
+                            "name": week,
+                            "time": f"Выходной",
+                        }
+                    )
+        return data
+
+    class Meta:
+        model = Location
+        fields = (
+            "id",
+            "full_name",
+            "short_name",
+            "description",
+            "images",
+            "address",
+            "category",
+            "phone",
+            "email",
+            "web_site",
+            "options",
+            "work_time",
+            "is_open",
+            "work_time_today",
+            "price",
+        )

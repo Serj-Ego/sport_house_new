@@ -18,7 +18,6 @@ export default function Options({ data }) {
     });
     setDataList(dataList);
   }, []);
-  console.log(dataList);
   return dataList.map((value, index) => {
     return (
       <HStack alignItems={"center"} space={4} marginY={1} key={index}>

@@ -5,6 +5,7 @@ from apps.location.api.views import (
     LocationOwnerListAPIVIew,
     LocationOwnerChangeStatusUpdateAPIView,
     LocationOwnerRetrieveAPIView,
+    LocationUserMapListAPIView,
 )
 
 app_name = "location"
@@ -21,10 +22,10 @@ urlpatterns = [
         "owner/<int:pk>",
         LocationOwnerRetrieveAPIView.as_view(),
         name="location-owner-retrieve",
-    )
-    # path(
-    #     "list/user/view/",
-    #     LocationForUserListAPIView.as_view(),
-    #     name="location-list-user-view",
-    # ),
+    ),
+    path(
+        "list/user/view/",
+        LocationUserMapListAPIView.as_view(),
+        name="location-list-user-view",
+    ),
 ]

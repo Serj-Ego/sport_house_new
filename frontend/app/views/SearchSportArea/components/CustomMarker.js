@@ -20,7 +20,7 @@ export default function CustomMarker({
         setSelectedLocation(item);
         handlePresentLocationDetails();
       }}
-      title={item.name}
+      title={item?.short_name ? item?.short_name : item?.full_name}
       description={item.description}
       anchor={{ x: 0, y: 1 }}
     >

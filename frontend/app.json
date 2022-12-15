@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "Sport House-stand",
-    "slug": "sport_house_stand",
+    "name": "My Sport House",
+    "slug": "my_sport_house",
     "owner": "yungerpeople",
-    "version": "3.0.1",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./app/assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -22,6 +22,7 @@
     ],
     "ios": {
       "supportsTablet": false,
+      "bundleIdentifier": "ru.mysporthouse.mysporthouse",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "The app accesses your photos to let you share them with your friends.",
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera",
