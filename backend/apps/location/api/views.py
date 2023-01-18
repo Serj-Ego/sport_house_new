@@ -20,7 +20,7 @@ from apps.location.api.serializers import (
     LocationCreateSerializer,
     LocationOwnerListSerializer,
     LocationRetrieveOwnerSerializer,
-    LocationMapSerializer,
+    LocationMapSerializer, LocationCheckDateSerializer, LocationCheckTimeEnrollSerializer,
 )
 from apps.location.models import Location, ListLocationStatus
 
@@ -120,3 +120,22 @@ class LocationUserMapListAPIView(ListAPIView):
                 .values("status__name")[:1]
             )
         ).filter(last_status_name=StatusConst.PUBLISHED, is_blocked=False)
+
+
+class LocationCheckCalendarDate(RetrieveAPIView):
+    """"""
+
+    permission_classes = (IsAuthenticated,)
+    serializer_class = LocationCheckDateSerializer
+    queryset = Location.objects.all()
+
+
+class LocationCheckTimeEnroll(RetrieveAPIView):
+    """"""
+
+    permission_classes = (IsAuthenticated,)
+    queryset = Location.objects.all()
+    serializer_class = LocationCheckTimeEnrollSerializer
+
+    def get_serializer_context(self):
+        return {"day": self.request.query_params.get('day')}

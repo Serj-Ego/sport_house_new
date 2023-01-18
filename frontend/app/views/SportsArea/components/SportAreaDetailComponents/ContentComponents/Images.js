@@ -50,7 +50,6 @@ export default function Images({ images }) {
       </TouchableWithoutFeedback>
     );
   }, []);
-  console.log(images);
   return (
     <DetailBlock title={"Фото"}>
       <FlatList

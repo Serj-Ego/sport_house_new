@@ -1,4 +1,5 @@
 import datetime
+import random
 
 from django.contrib.sites.models import Site
 from rest_framework import serializers
@@ -22,6 +23,15 @@ from apps.location.models import (
     ListLocationStatus,
 )
 
+
+def weeknum(dayname):
+    if dayname == 'Monday':   return 0
+    if dayname == 'Tuesday':  return 1
+    if dayname == 'Wednesday':return 2
+    if dayname == 'Thursday': return 3
+    if dayname == 'Friday':   return 4
+    if dayname == 'Saturday': return 5
+    if dayname == 'Sunday':   return 6
 
 class LocationAddressSerializer(serializers.ModelSerializer):
     subThoroughfare = serializers.CharField(source="sub_thoroughfare", required=False)
@@ -309,7 +319,7 @@ class LocationMapSerializer(serializers.ModelSerializer):
         now = datetime.datetime.now()
         week_name_now = weeks[now.strftime("%A")]
         work_day = obj.work_time.filter(week_name=week_name_now).first()
-        if work_day:
+        if work_day and work_day.start_date and work_day.end_date:
             start_day = datetime.datetime(
                 now.year,
                 now.month,
@@ -340,7 +350,7 @@ class LocationMapSerializer(serializers.ModelSerializer):
         now = datetime.datetime.now()
         week_name_now = weeks[now.strftime("%A")]
         work_day = obj.work_time.filter(week_name=week_name_now).first()
-        if work_day:
+        if work_day and work_day.start_date and work_day.end_date:
             start_day = datetime.datetime(
                 now.year,
                 now.month,
@@ -416,3 +426,73 @@ class LocationMapSerializer(serializers.ModelSerializer):
             "work_time_today",
             "price",
         )
+
+
+class LocationCheckDateSerializer(serializers.ModelSerializer):
+    """"""
+
+    days = serializers.SerializerMethodField()
+
+    def get_days(self, obj):
+        from datetime import date, timedelta
+
+        disabled_dates = []
+        weeks = {
+            "Понедельник":"Monday",
+            "Вторник":"Tuesday",
+            "Среда":"Wednesday",
+            "Четверг":"Thursday",
+            "Пятница":"Friday",
+            "Суббота":"Saturday",
+            "Воскресенье":"Sunday"
+        }
+        def alldays(year, whichDayYouWant):
+            d = date(year, datetime.datetime.now().month, datetime.datetime.now().day)
+            d += timedelta(days=(weeknum(whichDayYouWant) - d.weekday()) % 7)
+            while d.year <= year+1:
+                yield d
+                d += timedelta(days=7)
+
+        for work_time in obj.work_time.filter(start_date__isnull=True):
+            for d in alldays(datetime.datetime.now().year, weeks[work_time.week_name]):
+                disabled_dates.append(d)
+        return disabled_dates
+
+    class Meta:
+        model = Location
+        fields = ("id", "days")
+
+
+class LocationCheckTimeEnrollSerializer(serializers.ModelSerializer):
+    """ """
+
+    time = serializers.SerializerMethodField(read_only=True)
+
+    def get_time(self, obj):
+        weeks = {
+            "Monday": "Понедельник",
+            "Tuesday": "Вторник",
+            "Wednesday": "Среда",
+            "Thursday": "Четверг",
+            "Friday": "Пятница",
+            "Saturday": "Суббота",
+            "Sunday": "Воскресенье",
+        }
+        day = weeks.get(datetime.datetime.strptime(self.context.get('day'),"%Y-%m-%d").strftime("%A"))
+        work_time = obj.work_time.get(week_name=day)
+
+        def datetime_range(start, end, delta):
+            current = start
+            while current <= end:
+                yield current
+                current += delta
+
+        dts = [{"time":dt.strftime('%H:%M'), "isActive": random.choice([True, False])} for dt in
+               datetime_range(work_time.start_date, work_time.end_date,
+                              datetime.timedelta(minutes=60))]
+
+        return dts
+
+    class Meta:
+        model = Location
+        fields = ("id", "time")

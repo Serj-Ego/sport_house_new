@@ -4,7 +4,6 @@ import moment from "moment";
 
 export default function WorkTime({ data }) {
   return data.map((value, index) => {
-    console.log(value);
     return (
       <HStack key={index}>
         <Text>{value.week_name}</Text>

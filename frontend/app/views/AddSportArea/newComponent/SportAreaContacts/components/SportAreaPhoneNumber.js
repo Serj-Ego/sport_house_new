@@ -56,7 +56,6 @@ export default function SportAreaPhoneNumber() {
         }}
         onChangeText={(value) => {
           let number = formatMobileNumber(value);
-          //console.log(number);
           setPhoneNumber(number);
         }}
       />

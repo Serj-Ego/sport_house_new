@@ -3,25 +3,21 @@
     "name": "My Sport House",
     "slug": "my_sport_house",
     "owner": "yungerpeople",
-    "version": "1.0.0",
+    "version": "1.0",
     "orientation": "portrait",
     "icon": "./app/assets/icon.png",
     "userInterfaceStyle": "automatic",
-    "jsEngine": "hermes",
     "splash": {
       "image": "./app/assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffa160"
-    },
-    "updates": {
-      "fallbackToCacheTimeout": 0,
-      "url": "https://u.expo.dev/735d11f2-cd77-408a-ab2e-d2dff96523dd"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
       "supportsTablet": false,
+      "buildNumber": "3",
       "bundleIdentifier": "ru.mysporthouse.mysporthouse",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "The app accesses your photos to let you share them with your friends.",
@@ -29,14 +25,8 @@
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
       }
     },
-    "extra": {
-      "eas": {
-        "projectId": "735d11f2-cd77-408a-ab2e-d2dff96523dd"
-      }
-    },
-    "runtimeVersion": {
-      "policy": "sdkVersion"
-    },
-    "android": {}
+    "plugins": [
+      "sentry-expo"
+    ]
   }
 }

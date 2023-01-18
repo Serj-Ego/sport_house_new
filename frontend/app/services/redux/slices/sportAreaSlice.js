@@ -101,6 +101,37 @@ export const SportAreaChangeStatusApiRequest = createAsyncThunk(
   }
 );
 
+/**
+ * Проверить дату для записи.
+ */
+export const SportAreaCheckDateApiRequest = createAsyncThunk(
+  "sportArea/SportAreaCheckDateApiRequest",
+  async (id, { rejectWithValue }) => {
+    const response = await api.get(`location/check/date/${id}`);
+    const dataResponse = await response.json();
+    if (!response.ok) {
+      return rejectWithValue(dataResponse);
+    }
+    return dataResponse;
+  }
+);
+
+/**
+ * Проверить time для записи.
+ */
+export const SportAreaCheckTimeApiRequest = createAsyncThunk(
+  "sportArea/SportAreaCheckTimeApiRequest",
+  async ({ id, day }, { rejectWithValue }) => {
+    const response = await api.get(`location/check/time/${id}`, {
+      searchParams: { day: day },
+    });
+    const dataResponse = await response.json();
+    if (!response.ok) {
+      return rejectWithValue(dataResponse);
+    }
+    return dataResponse;
+  }
+);
 const baseSlice = createSlice({
   name: "sportArea",
   initialState,
