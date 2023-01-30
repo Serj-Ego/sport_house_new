@@ -1,5 +1,4 @@
 import datetime
-import random
 
 from django.contrib.sites.models import Site
 from rest_framework import serializers
@@ -21,17 +20,27 @@ from apps.location.models import (
     LocationOptions,
     LocationKeyWords,
     ListLocationStatus,
+    BookingLocation,
 )
+from apps.user.utils.notification import send_user_notification
 
 
 def weeknum(dayname):
-    if dayname == 'Monday':   return 0
-    if dayname == 'Tuesday':  return 1
-    if dayname == 'Wednesday':return 2
-    if dayname == 'Thursday': return 3
-    if dayname == 'Friday':   return 4
-    if dayname == 'Saturday': return 5
-    if dayname == 'Sunday':   return 6
+    if dayname == "Monday":
+        return 0
+    if dayname == "Tuesday":
+        return 1
+    if dayname == "Wednesday":
+        return 2
+    if dayname == "Thursday":
+        return 3
+    if dayname == "Friday":
+        return 4
+    if dayname == "Saturday":
+        return 5
+    if dayname == "Sunday":
+        return 6
+
 
 class LocationAddressSerializer(serializers.ModelSerializer):
     subThoroughfare = serializers.CharField(source="sub_thoroughfare", required=False)
@@ -111,6 +120,8 @@ class LocationCreateSerializer(serializers.ModelSerializer):
                 week_name=week.get("week"),
                 start_date=week.get("startWork"),
                 end_date=week.get("endWork"),
+                interval=week.get("interval"),
+                breaking=week.get("break"),
             )
             location.work_time.add(week)
 
@@ -438,18 +449,19 @@ class LocationCheckDateSerializer(serializers.ModelSerializer):
 
         disabled_dates = []
         weeks = {
-            "Понедельник":"Monday",
-            "Вторник":"Tuesday",
-            "Среда":"Wednesday",
-            "Четверг":"Thursday",
-            "Пятница":"Friday",
-            "Суббота":"Saturday",
-            "Воскресенье":"Sunday"
+            "Понедельник": "Monday",
+            "Вторник": "Tuesday",
+            "Среда": "Wednesday",
+            "Четверг": "Thursday",
+            "Пятница": "Friday",
+            "Суббота": "Saturday",
+            "Воскресенье": "Sunday",
         }
+
         def alldays(year, whichDayYouWant):
             d = date(year, datetime.datetime.now().month, datetime.datetime.now().day)
             d += timedelta(days=(weeknum(whichDayYouWant) - d.weekday()) % 7)
-            while d.year <= year+1:
+            while d.year <= year + 1:
                 yield d
                 d += timedelta(days=7)
 
@@ -478,7 +490,11 @@ class LocationCheckTimeEnrollSerializer(serializers.ModelSerializer):
             "Saturday": "Суббота",
             "Sunday": "Воскресенье",
         }
-        day = weeks.get(datetime.datetime.strptime(self.context.get('day'),"%Y-%m-%d").strftime("%A"))
+        day = weeks.get(
+            datetime.datetime.strptime(self.context.get("day"), "%Y-%m-%d").strftime(
+                "%A"
+            )
+        )
         work_time = obj.work_time.get(week_name=day)
 
         def datetime_range(start, end, delta):
@@ -487,12 +503,83 @@ class LocationCheckTimeEnrollSerializer(serializers.ModelSerializer):
                 yield current
                 current += delta
 
-        dts = [{"time":dt.strftime('%H:%M'), "isActive": random.choice([True, False])} for dt in
-               datetime_range(work_time.start_date, work_time.end_date,
-                              datetime.timedelta(minutes=60))]
+        dts = []
+        for dt in datetime_range(
+            work_time.start_date,
+            work_time.end_date,
+            datetime.timedelta(minutes=work_time.interval + work_time.breaking),
+        ):
+            is_active = True
+            if BookingLocation.objects.filter(
+                date=self.context.get("day"), start_event=dt
+            ).exists():
+                is_active = False
+            dts.append({"time": dt.strftime("%H:%M"), "isActive": is_active})
 
         return dts
 
     class Meta:
         model = Location
         fields = ("id", "time")
+
+
+class BookingLocationCreateSerializer(serializers.ModelSerializer):
+    """Создание бронирования спортивной площадки"""
+
+    def create(self, validated_data):
+        user = self.context.get("user")
+        location = Location.objects.get(id=self.context.get("location_id"))
+        weeks = {
+            "Monday": "Понедельник",
+            "Tuesday": "Вторник",
+            "Wednesday": "Среда",
+            "Thursday": "Четверг",
+            "Friday": "Пятница",
+            "Saturday": "Суббота",
+            "Sunday": "Воскресенье",
+        }
+        week_name_now = weeks[validated_data.get("date").strftime("%A")]
+        work_day = location.work_time.filter(week_name=week_name_now).first()
+        booking = BookingLocation.objects.create(
+            end_event=(
+                datetime.datetime.combine(
+                    datetime.datetime.today(), validated_data.get("start_event")
+                )
+                + datetime.timedelta(minutes=work_day.interval)
+            ).time(),
+            creator=user,
+            **validated_data,
+        )
+        booking.members.add(user)
+        booking.add_status(user, StatusConst.REVIEW)
+        send_user_notification(
+            location.owner, "Поступила новая заявка", location.full_name
+        )
+        location.bookings.add(booking)
+        return booking
+
+    class Meta:
+        model = BookingLocation
+        fields = (
+            "date",
+            "start_event",
+        )
+
+
+class BookingListSerializer(serializers.ModelSerializer):
+    last_status = serializers.CharField(read_only=True)
+    location_name = serializers.SerializerMethodField(read_only=True)
+
+    def get_location_name(self, obj):
+        return obj.location.first().full_name
+
+    class Meta:
+        model = BookingLocation
+        fields = (
+            "id",
+            "date",
+            "start_event",
+            "end_event",
+            "last_status",
+            "location_name",
+        )

@@ -2,9 +2,17 @@ import DefaultBackground from "../../components/DefaultBackground";
 import { Box, Button, Heading, Image, Text, View } from "native-base";
 import { HEIGHT, WIDTH } from "../../modules/Theme/dimensions";
 import React, { useEffect, useState } from "react";
-import { SportAreaCheckTimeApiRequest } from "../../services/redux/slices/sportAreaSlice";
+import {
+  SportAreaBookingApiRequest,
+  SportAreaCheckTimeApiRequest,
+} from "../../services/redux/slices/sportAreaSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { ActivityIndicator, FlatList, TouchableOpacity } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
 import { useDispatch } from "react-redux";
 import { COLOR_ACCENT } from "../../modules/Theme/colors";
 import { PADDING_LR_MAIN } from "../../modules/Theme/padding";
@@ -14,6 +22,8 @@ export default function SelectTimeEnroll({ navigation, route }) {
   const [isLoading, setIsLoading] = useState(true);
   const [timeList, setTimeList] = useState([]);
   const [selectedTime, setSelectedTime] = useState([]);
+  const [isLoadingBooking, setIsLoadingBooking] = useState(false);
+
   useEffect(() => {
     dispatch(
       SportAreaCheckTimeApiRequest({
@@ -53,7 +63,7 @@ export default function SelectTimeEnroll({ navigation, route }) {
                 <TouchableOpacity
                   disabled={!item.isActive}
                   onPress={() => {
-                    if (!selectedTime.find((el) => el.time === item.time)) {
+                    if (selectedTime.length === 0) {
                       setSelectedTime([
                         ...selectedTime,
                         { time: item.time, index },
@@ -104,8 +114,29 @@ export default function SelectTimeEnroll({ navigation, route }) {
                 marginBottom: 14,
               },
             ]}
-            onPress={() => {}}
+            onPress={() => {
+              setIsLoadingBooking(true);
+              dispatch(
+                SportAreaBookingApiRequest({
+                  id: route.params.areaId,
+                  day: route.params.day,
+                  start_event: selectedTime[0].time,
+                })
+              )
+                .then(unwrapResult)
+                .then(() => {
+                  Alert.alert(
+                    "Успешно",
+                    "Заявка на бронирование спортивной площадки отправлена, ожидайте подтверждения со стороны площадки."
+                  );
+                  navigation.pop(2);
+                })
+                .finally(() => {
+                  setIsLoadingBooking(false);
+                });
+            }}
           >
+            {isLoadingBooking && <ActivityIndicator />}
             <Text color={"white"}>Далее</Text>
           </Button>
         )}

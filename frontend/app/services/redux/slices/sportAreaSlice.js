@@ -8,6 +8,7 @@ let initialState = {
   sportAreaUserList: [],
 
   sportAreaDetailView: {},
+  sportAreaBookingList: [],
 };
 
 /**
@@ -132,6 +133,56 @@ export const SportAreaCheckTimeApiRequest = createAsyncThunk(
     return dataResponse;
   }
 );
+
+/**
+ * Запись на площадку
+ */
+export const SportAreaBookingApiRequest = createAsyncThunk(
+  "sportArea/SportAreaBookingApiRequest",
+  async ({ id, day, start_event }, { rejectWithValue }) => {
+    const response = await api.post(`location/booking/${id}`, {
+      json: { date: day, start_event: start_event },
+    });
+    const dataResponse = await response.json();
+    if (!response.ok) {
+      return rejectWithValue(dataResponse);
+    }
+    return dataResponse;
+  }
+);
+
+/**
+ * список записей на площадку.
+ */
+export const SportAreaBookingListApiRequest = createAsyncThunk(
+  "sportArea/SportAreaBookingListApiRequest",
+  async (_, { rejectWithValue }) => {
+    const response = await api.get(`location/booking/list/`);
+    const dataResponse = await response.json();
+    if (!response.ok) {
+      return rejectWithValue(dataResponse);
+    }
+    return dataResponse;
+  }
+);
+
+/**
+ * изменить статус брони.
+ */
+export const SportAreaBookingChangeStatusApiRequest = createAsyncThunk(
+  "sportArea/SportAreaBookingChangeStatusApiRequest",
+  async ({ id, statusName }, { rejectWithValue }) => {
+    const response = await api.put(`location/booking/change/status/${id}`, {
+      json: { status_name: statusName },
+    });
+    const dataResponse = await response.json();
+    if (!response.ok) {
+      return rejectWithValue(dataResponse);
+    }
+    return dataResponse;
+  }
+);
+
 const baseSlice = createSlice({
   name: "sportArea",
   initialState,
@@ -164,6 +215,13 @@ const baseSlice = createSlice({
     [SportAreaRetrieveOwnerApiRequest.fulfilled]: (state, action) => {
       state.sportAreaDetailView = action.payload;
     },
+
+    /**
+     * список записей на площадку.
+     */
+    [SportAreaBookingListApiRequest.fulfilled]: (state, action) => {
+      state.sportAreaBookingList = action.payload;
+    },
   },
 });
 export default baseSlice.reducer;
@@ -176,3 +234,6 @@ export const updatedStatusSportArea = (state) =>
 export const sportAreaUserList = (state) => state.sportArea.sportAreaUserList;
 export const sportAreaDetailView = (state) =>
   state.sportArea.sportAreaDetailView;
+
+export const sportAreaBookingList = (state) =>
+  state.sportArea.sportAreaBookingList;

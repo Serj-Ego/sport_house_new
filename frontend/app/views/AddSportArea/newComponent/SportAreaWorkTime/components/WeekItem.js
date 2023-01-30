@@ -1,10 +1,15 @@
-import { Heading, HStack, Text } from "native-base";
+import { Heading, HStack, Input, Text } from "native-base";
 import { Spacer } from "native-base/src/components/primitives/Flex";
 import { StyleSheet, Switch } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import Animated, { FadeInUp, FadeOutUp, Layout } from "react-native-reanimated";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { COLOR_ACCENT } from "../../../../../modules/Theme/colors";
+import {
+  COLOR_ACCENT,
+  COLORS_DARK_THEME,
+  COLORS_FORM,
+  COLORS_LIGHT_THEME,
+} from "../../../../../modules/Theme/colors";
 import { addSportAreaContext } from "../../../../../navigation/AdditionalStack";
 
 export default function WeekItem({ item, index }) {
@@ -90,6 +95,70 @@ export default function WeekItem({ item, index }) {
               is24Hour={true}
               onChange={(event, date) => {
                 setEndWork(date);
+              }}
+            />
+          </HStack>
+          <HStack alignItems={"center"}>
+            <Heading size={"xs"}>Интервал тренировок:</Heading>
+            <Spacer />
+            <Input
+              value={workTime[index].interval}
+              height={45}
+              width="40%"
+              borderRadius={12}
+              variant="filled"
+              fontWeight={"bold"}
+              fontSize={16}
+              placeholder={"минуты"}
+              placeholderTextColor={COLORS_FORM.PLACEHOLDER}
+              clearButtonMode="always"
+              keyboardType={"numeric"}
+              _focus={{
+                borderColor: "rgba(255,255,255,0)",
+              }}
+              _light={{
+                backgroundColor: COLORS_FORM.INPUT,
+                color: COLORS_LIGHT_THEME.TEXT,
+              }}
+              _dark={{
+                color: COLORS_DARK_THEME.TEXT,
+                backgroundColor: COLORS_FORM.DARK_INPUT,
+              }}
+              onChangeText={(value) => {
+                workTime[index].interval = value;
+                setWorkTime(workTime);
+              }}
+            />
+          </HStack>
+          <HStack alignItems={"center"}>
+            <Heading size={"xs"}>Время перерыва:</Heading>
+            <Spacer />
+            <Input
+              value={workTime[index].break}
+              height={45}
+              width="40%"
+              borderRadius={12}
+              variant="filled"
+              fontWeight={"bold"}
+              fontSize={16}
+              placeholder={"минуты"}
+              placeholderTextColor={COLORS_FORM.PLACEHOLDER}
+              clearButtonMode="always"
+              keyboardType={"numeric"}
+              _focus={{
+                borderColor: "rgba(255,255,255,0)",
+              }}
+              _light={{
+                backgroundColor: COLORS_FORM.INPUT,
+                color: COLORS_LIGHT_THEME.TEXT,
+              }}
+              _dark={{
+                color: COLORS_DARK_THEME.TEXT,
+                backgroundColor: COLORS_FORM.DARK_INPUT,
+              }}
+              onChangeText={(value) => {
+                workTime[index].break = value;
+                setWorkTime(workTime);
               }}
             />
           </HStack>

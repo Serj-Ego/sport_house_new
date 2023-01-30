@@ -6,7 +6,11 @@ from apps.location.api.views import (
     LocationOwnerChangeStatusUpdateAPIView,
     LocationOwnerRetrieveAPIView,
     LocationUserMapListAPIView,
-    LocationCheckCalendarDate, LocationCheckTimeEnroll,
+    LocationCheckCalendarDate,
+    LocationCheckTimeEnroll,
+    BookingLocationCreateAPIView,
+    BookingUserListAPIView,
+    BookingChangeStatus,
 )
 
 app_name = "location"
@@ -30,5 +34,16 @@ urlpatterns = [
         name="location-list-user-view",
     ),
     path("check/date/<int:pk>", LocationCheckCalendarDate.as_view(), name="check-date"),
-    path("check/time/<int:pk>", LocationCheckTimeEnroll.as_view(), name='check-time'),
+    path("check/time/<int:pk>", LocationCheckTimeEnroll.as_view(), name="check-time"),
+    path(
+        "booking/<int:pk>",
+        BookingLocationCreateAPIView.as_view(),
+        name="booking-location",
+    ),
+    path("booking/list/", BookingUserListAPIView.as_view(), name="booking-list"),
+    path(
+        "booking/change/status/<int:pk>",
+        BookingChangeStatus.as_view(),
+        name="booking-change-status",
+    ),
 ]

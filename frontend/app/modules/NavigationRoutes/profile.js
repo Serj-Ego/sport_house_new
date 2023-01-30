@@ -5,6 +5,9 @@ export const PROFILE_ROUTE = {
   NOTIFICATION: { route: "notification", title: "Уведомления" },
   SETTINGS: { route: "settings", title: "Настройки" },
 
+  MY_BOOKING: { route: "booking_sportsman", title: "Мои бронирования" },
+  BOOKING_AREA: { route: "booking_area", title: "Бронирования" },
+
   SPORT_AREA_ITEMS: {
     route: "sport_area_items",
     title: "Мои объекты",

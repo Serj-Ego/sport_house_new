@@ -33,13 +33,55 @@ export default function AdditionalStackNavigator() {
   const [images, setImages] = useState([]);
   const [address, setAddress] = useState({});
   const [workTime, setWorkTime] = useState([
-    { week: "Понедельник", startWork: null, endWork: null },
-    { week: "Вторник", startWork: null, endWork: null },
-    { week: "Среда", startWork: null, endWork: null },
-    { week: "Четверг", startWork: null, endWork: null },
-    { week: "Пятница", startWork: null, endWork: null },
-    { week: "Суббота", startWork: null, endWork: null },
-    { week: "Воскресенье", startWork: null, endWork: null },
+    {
+      week: "Понедельник",
+      startWork: null,
+      endWork: null,
+      interval: null,
+      break: null,
+    },
+    {
+      week: "Вторник",
+      startWork: null,
+      endWork: null,
+      interval: null,
+      break: null,
+    },
+    {
+      week: "Среда",
+      startWork: null,
+      endWork: null,
+      interval: null,
+      break: null,
+    },
+    {
+      week: "Четверг",
+      startWork: null,
+      endWork: null,
+      interval: null,
+      break: null,
+    },
+    {
+      week: "Пятница",
+      startWork: null,
+      endWork: null,
+      interval: null,
+      break: null,
+    },
+    {
+      week: "Суббота",
+      startWork: null,
+      endWork: null,
+      interval: null,
+      break: null,
+    },
+    {
+      week: "Воскресенье",
+      startWork: null,
+      endWork: null,
+      interval: null,
+      break: null,
+    },
   ]);
   const [price, setPrice] = useState(null);
   const [length, setLength] = useState(0);

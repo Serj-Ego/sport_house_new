@@ -19,6 +19,8 @@ class LocationSearchFilter(filters.BaseFilterBackend):
         data = request.query_params.get("search", None)
         if data:
             queryset = queryset.filter(
-                Q(full_name__icontains=data) | Q(short_name=data) | Q(description=data)
+                Q(full_name__icontains=data)
+                | Q(short_name__icontains=data)
+                | Q(description__icontains=data)
             )
         return queryset
