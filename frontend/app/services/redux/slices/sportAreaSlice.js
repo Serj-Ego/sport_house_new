@@ -171,9 +171,9 @@ export const SportAreaBookingListApiRequest = createAsyncThunk(
  */
 export const SportAreaBookingChangeStatusApiRequest = createAsyncThunk(
   "sportArea/SportAreaBookingChangeStatusApiRequest",
-  async ({ id, statusName }, { rejectWithValue }) => {
+  async ({ id, statusName, commentary }, { rejectWithValue }) => {
     const response = await api.put(`location/booking/change/status/${id}`, {
-      json: { status_name: statusName },
+      json: { status_name: statusName, commentary: commentary },
     });
     const dataResponse = await response.json();
     if (!response.ok) {

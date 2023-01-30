@@ -6,7 +6,7 @@ import {
   sportAreaBookingList,
   SportAreaBookingListApiRequest,
 } from "../../services/redux/slices/sportAreaSlice";
-import { ActivityIndicator, FlatList } from "react-native";
+import { ActivityIndicator, Alert, FlatList } from "react-native";
 import {
   Button,
   Divider,
@@ -17,22 +17,28 @@ import {
   VStack,
 } from "native-base";
 import { StatusConst } from "../../modules/StatusConst";
+import { userInfoData } from "../../services/redux/slices/userSlice";
+import { RoleConst } from "../../modules/RoleConst";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 export default function SportsManBooking({ route }) {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
   const bookingList = useSelector(sportAreaBookingList);
+  const userDataState = useSelector(userInfoData);
+
   useEffect(() => {
     dispatch(SportAreaBookingListApiRequest()).finally(() => {
       setIsLoading(false);
     });
   }, [route]);
 
-  const cancelBooking = (id) => {
+  const changeStatusBooking = ({ id, status, commentary }) => {
     dispatch(
       SportAreaBookingChangeStatusApiRequest({
         id: id,
-        statusName: StatusConst.REJECTED,
+        statusName: status,
+        commentary: commentary,
       })
     )
       .then(unwrapResult)
@@ -66,16 +72,40 @@ export default function SportsManBooking({ route }) {
                     <Text>{item.end_event}</Text>
                   </HStack>
                   <Heading size={"sm"}>{item.last_status}</Heading>
+                  <Text>Комментарий:{item.last_commentary}</Text>
                 </VStack>
                 <Spacer />
                 {item.last_status !== StatusConst.REJECTED &&
+                  userDataState.role === RoleConst.SPORT_AREA &&
                   item.last_status !== StatusConst.CONFIRMED && (
-                    <Button
-                      colorScheme={"red"}
-                      onPress={() => cancelBooking(item.id)}
-                    >
-                      Отменить
-                    </Button>
+                    <VStack justifyContent={"center"} space={2}>
+                      <Button
+                        colorScheme={"green"}
+                        onPress={() =>
+                          changeStatusBooking({
+                            id: item.id,
+                            status: StatusConst.CONFIRMED,
+                            commentary: "",
+                          })
+                        }
+                      >
+                        Подтвердить
+                      </Button>
+                      <Button
+                        colorScheme={"red"}
+                        onPress={() => {
+                          Alert.prompt("Title", "Subtitle", (text) =>
+                            changeStatusBooking({
+                              id: item.id,
+                              status: StatusConst.REJECTED,
+                              commentary: text,
+                            })
+                          );
+                        }}
+                      >
+                        Отменить
+                      </Button>
+                    </VStack>
                   )}
               </HStack>
             );

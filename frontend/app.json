@@ -17,7 +17,7 @@
     ],
     "ios": {
       "supportsTablet": false,
-      "buildNumber": "3",
+      "buildNumber": "5",
       "bundleIdentifier": "ru.mysporthouse.mysporthouse",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "The app accesses your photos to let you share them with your friends.",
@@ -27,6 +27,11 @@
     },
     "plugins": [
       "sentry-expo"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "b2f15052-261e-4364-ad69-2d23572ac9d1"
+      }
+    }
   }
 }
