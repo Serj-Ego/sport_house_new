@@ -95,6 +95,7 @@ export default function CreateButton() {
               navigation.navigate(TAB_ROUTES.PROFILE);
             })
             .catch((err) => {
+              console.log(err, 1);
               Alert.alert("Ошибка", "Произошла непредвиденная ошибка!");
             })
             .finally(() => {

@@ -8,7 +8,6 @@ import {
 import { Linking } from "react-native";
 
 export default function MoreInfoLocation({ selectedLocation }) {
-  console.log(selectedLocation?.work_time);
   return (
     <>
       <Heading size={"md"} mt={2} mb={2}>

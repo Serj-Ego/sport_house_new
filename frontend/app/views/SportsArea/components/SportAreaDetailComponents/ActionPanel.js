@@ -9,7 +9,6 @@ import ActionButton from "./ActionButton";
 
 export default function ActionPanel({ isBlocked, last_status, id }) {
   const colorScheme = useColorScheme();
-  console.log(isBlocked);
   return (
     <HStack justifyContent={"space-between"} marginY={"1%"}>
       <Box

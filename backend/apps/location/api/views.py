@@ -12,6 +12,7 @@ from rest_framework.generics import (
 )
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from apps.base.models import RoleConst, StatusConst
 from apps.base.permissions import HasGroupPermission
@@ -21,8 +22,12 @@ from apps.location.api.serializers import (
     LocationOwnerListSerializer,
     LocationRetrieveOwnerSerializer,
     LocationMapSerializer,
+    LocationCheckDateSerializer,
+    LocationCheckTimeEnrollSerializer,
+    BookingLocationCreateSerializer,
+    BookingListSerializer,
 )
-from apps.location.models import Location, ListLocationStatus
+from apps.location.models import Location, ListLocationStatus, BookingLocation
 
 
 class LocationCreateAPIView(CreateAPIView):
@@ -120,3 +125,62 @@ class LocationUserMapListAPIView(ListAPIView):
                 .values("status__name")[:1]
             )
         ).filter(last_status_name=StatusConst.PUBLISHED, is_blocked=False)
+
+
+class LocationCheckCalendarDate(RetrieveAPIView):
+    """"""
+
+    permission_classes = (IsAuthenticated,)
+    serializer_class = LocationCheckDateSerializer
+    queryset = Location.objects.all()
+
+
+class LocationCheckTimeEnroll(RetrieveAPIView):
+    """"""
+
+    permission_classes = (IsAuthenticated,)
+    queryset = Location.objects.all()
+    serializer_class = LocationCheckTimeEnrollSerializer
+
+    def get_serializer_context(self):
+        return {"day": self.request.query_params.get("day")}
+
+
+class BookingLocationCreateAPIView(CreateAPIView):
+    """Создание бронирования"""
+
+    permission_classes = (IsAuthenticated,)
+    serializer_class = BookingLocationCreateSerializer
+    queryset = BookingLocation.objects.all()
+
+    def get_serializer_context(self):
+        """Проставляем в контекст сериализатора пользователя"""
+        return {"user": self.request.user, "location_id": self.kwargs.get("pk")}
+
+
+class BookingUserListAPIView(ListAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = BookingListSerializer
+    queryset = None
+    pagination_class = None
+
+    def get_queryset(self):
+        if RoleConst.SPORTSMAN in self.request.user.groups.all().values_list(
+            "name", flat=True
+        ):
+            return BookingLocation.objects.filter(creator=self.request.user).order_by(
+                "-id"
+            )
+        if RoleConst.SPORT_AREA in self.request.user.groups.all().values_list(
+            "name", flat=True
+        ):
+            return BookingLocation.objects.none()
+
+
+class BookingChangeStatus(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def put(self, request, *args, **kwargs):
+        item = BookingLocation.objects.get(id=kwargs.get("pk"))
+        item.add_status(request.user, request.data["status_name"])
+        return Response(BookingListSerializer(item).data, status=status.HTTP_200_OK)

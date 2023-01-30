@@ -54,6 +54,8 @@ class WorkTimeLocation(models.Model):
     week_name = models.CharField("День Недели", max_length=255)
     start_date = models.DateTimeField("Начало работы", null=True)
     end_date = models.DateTimeField("Завершение работы", null=True)
+    interval = models.PositiveIntegerField("Интервал", default=None, null=True)
+    breaking = models.PositiveIntegerField("Перерыв", default=None, null=True)
 
     def __str__(self):
         if self.start_date and self.end_date:
@@ -152,20 +154,85 @@ class ListManagerLocation(models.Model):
         verbose_name_plural = "Менеджеры спортивной площадки"
 
 
-# class EventCalendarLocation(models.Model):
-#     """Календарь мероприятий на спортивной площадке"""
-#
-#     event_name = models.CharField("Название мероприятия", max_length=510)
-#     date = models.DateField("Дата проведения")
-#     start_event = models.TimeField("Время начала")
-#     end_event = models.TimeField("Время завершения")
-#     creator = models.ForeignKey(
-#         "user.User",
-#         on_delete=models.PROTECT,
-#         verbose_name="Пользователь",
-#     )
-#     members = models.ManyToManyField("user.User", verbose_name="Участники")
-#     trainer = models.ManyToManyField("user.User", verbose_name="Тренеры")
+class ListBookingStatus(models.Model):
+    """Статусы бронирований"""
+
+    created_date = models.DateTimeField("Дата создания", auto_now=True)
+    commentary = models.TextField("Комментарий", null=True, blank=True)
+    user = models.ForeignKey(
+        "user.User", on_delete=models.PROTECT, verbose_name="Пользователь"
+    )
+    status = models.ForeignKey(Status, on_delete=models.PROTECT, verbose_name="Статус")
+    booking = models.ForeignKey(
+        "BookingLocation",
+        on_delete=models.CASCADE,
+        related_name="listbookingstatus",
+        verbose_name="Бронирование",
+    )
+
+    class Meta:
+        verbose_name = "Статусы бронирований"
+        verbose_name_plural = "Статусы бронирований"
+
+
+class BookingLocation(models.Model):
+    """Календарь Бронирований на спортивной площадке"""
+
+    date = models.DateField("Дата проведения")
+    start_event = models.TimeField("Время начала")
+    end_event = models.TimeField("Время завершения")
+    creator = models.ForeignKey(
+        "user.User",
+        on_delete=models.PROTECT,
+        verbose_name="Пользователь",
+        related_name="user_event",
+    )
+    members = models.ManyToManyField(
+        "user.User", verbose_name="Участники", related_name="user_member_booking"
+    )
+    created_date = models.DateTimeField("Дата создания", auto_now=True)
+    statuses = models.ManyToManyField(
+        Status,
+        through="ListBookingStatus",
+        through_fields=("booking", "status"),
+        verbose_name="Cтатусы",
+    )
+
+    def add_status(self, user: User, status_name: str, commentary=""):
+        """
+        Добавить новый статус бронированию
+
+        :param user: Пользователь изменивший статус
+        :param status_name: Новый статус
+        :param commentary: Комментарий к статусу
+        """
+
+        return ListBookingStatus.objects.create(
+            created_date=timezone.now(),
+            user=user,
+            status=Status.objects.get(name=status_name),
+            commentary=commentary,
+            booking=self,
+        )
+
+    @property
+    def last_status(self):
+        """Последний статус у спортивной площадки"""
+
+        return (
+            ListBookingStatus.objects.filter(booking=self)
+            .order_by("-created_date")
+            .first()
+            .status.name
+        )
+
+    @property
+    def location(self):
+        return Location.objects.filter(bookings=self)
+
+    class Meta:
+        verbose_name = "Бронирование площадки"
+        verbose_name_plural = "Бронирования площадки"
 
 
 class Location(models.Model):
@@ -235,6 +302,7 @@ class Location(models.Model):
     max_viewer = models.PositiveIntegerField(
         "Максимальное количество зрителей", default=0
     )
+    bookings = models.ManyToManyField(BookingLocation, verbose_name="Бронирования")
 
     def add_status(self, user: User, status_name: str, commentary=""):
         """

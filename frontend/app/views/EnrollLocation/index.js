@@ -1,26 +1,57 @@
 import DefaultBackground from "../../components/DefaultBackground";
 import { HEIGHT } from "../../modules/Theme/dimensions";
-import { Box, Heading, HStack, Icon, Image, Text, View } from "native-base";
-import React, { useState } from "react";
-import {
-  COLOR_ACCENT,
-  COLORS_DARK_THEME,
-  COLORS_LIGHT_THEME,
-  PRIMARY_GRADIENT,
-} from "../../modules/Theme/colors";
-import { Entypo, Ionicons } from "@expo/vector-icons";
-import { useSelector } from "react-redux";
-import { userInfoData } from "../../services/redux/slices/userSlice";
-import { TouchableOpacity, TouchableWithoutFeedback } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { PADDING_LR_MAIN } from "../../modules/Theme/padding";
+import { Box, Heading, Image, View } from "native-base";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useDispatch } from "react-redux";
+import { Calendar } from "react-native-calendars/src/index";
+
+import { SportAreaCheckDateApiRequest } from "../../services/redux/slices/sportAreaSlice";
+import { unwrapResult } from "@reduxjs/toolkit";
+import moment from "moment";
+import { MAP_ROUTE } from "../../modules/NavigationRoutes/map";
+
+const INITIAL_DATE = moment().format("YYYY-MM-DD");
 
 export default function EnrollLocation({ navigation, route }) {
-  const userDataState = useSelector(userInfoData);
-  const [trainingType, setTrainingType] = useState(
-    userDataState.recomendation_info
-      ? userDataState.recomendation_info.training_type
-      : "Индивидуальная"
+  const [disabledDate, setDisabledDate] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useDispatch();
+  const [selected, setSelected] = useState(INITIAL_DATE);
+  useEffect(() => {
+    let dates = {};
+    dispatch(SportAreaCheckDateApiRequest(route.params.areaId))
+      .then(unwrapResult)
+      .then((res) => {
+        res.days.map((value) => {
+          dates[value] = { disabled: true };
+        });
+      })
+      .finally(() => {
+        setDisabledDate(dates);
+        setIsLoading(false);
+      });
+  }, []);
+
+  const marked = useMemo(() => {
+    return Object.assign({}, disabledDate, {
+      [selected]: {
+        selected: true,
+        selectedColor: "blue",
+      },
+    });
+  }, [selected, disabledDate]);
+
+  const onDayPress = useCallback(
+    (day) => {
+      if (!isLoading) {
+        setSelected(day.dateString);
+        navigation.navigate(MAP_ROUTE.ENROLL_TIME.route, {
+          day: day.dateString,
+          areaId: route.params.areaId,
+        });
+      }
+    },
+    [isLoading]
   );
   return (
     <DefaultBackground>
@@ -32,108 +63,18 @@ export default function EnrollLocation({ navigation, route }) {
           size={HEIGHT / 4}
         />
         <Box>
-          <Heading>Тип тренировки</Heading>
-          <HStack space={"2%"} marginY={4}>
-            <TouchableWithoutFeedback
-              onPress={() => {
-                setTrainingType("Индивидуальная");
-              }}
-            >
-              <Box
-                style={{
-                  height: HEIGHT / 8,
-                  width: "49%",
-                  borderStyle: "solid",
-                  borderWidth: 2,
-                  borderColor:
-                    trainingType === "Индивидуальная"
-                      ? COLOR_ACCENT.ACCENT
-                      : "gray",
-                  borderRadius: 12,
-                }}
-                _light={{ backgroundColor: COLORS_LIGHT_THEME.WHITE_BLOCK }}
-                _dark={{ backgroundColor: COLORS_DARK_THEME.DARK_BLOCK }}
-              >
-                <Icon
-                  as={Ionicons}
-                  size={8}
-                  name="ios-person"
-                  textAlign={"center"}
-                  _light={{ color: COLOR_ACCENT.ACCENT }}
-                  _dark={{ color: COLOR_ACCENT.ACCENT }}
-                  style={{ position: "absolute", top: 12, left: 12 }}
-                />
-                <Heading
-                  size={"md"}
-                  style={{ position: "absolute", bottom: 12, right: 12 }}
-                >
-                  Индивидуальная
-                </Heading>
-              </Box>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback
-              onPress={() => {
-                setTrainingType("Командная");
-              }}
-            >
-              <Box
-                style={{
-                  height: HEIGHT / 8,
-                  width: "49%",
-                  borderStyle: "solid",
-                  borderWidth: 2,
-                  borderColor:
-                    trainingType === "Командная" ? COLOR_ACCENT.ACCENT : "gray",
-                  borderRadius: 12,
-                }}
-                _light={{ backgroundColor: COLORS_LIGHT_THEME.WHITE_BLOCK }}
-                _dark={{ backgroundColor: COLORS_DARK_THEME.DARK_BLOCK }}
-              >
-                <Icon
-                  as={Ionicons}
-                  size={10}
-                  name="ios-people"
-                  textAlign={"center"}
-                  _light={{ color: COLOR_ACCENT.ACCENT }}
-                  _dark={{ color: COLOR_ACCENT.ACCENT }}
-                  style={{ position: "absolute", top: 12, left: 12 }}
-                />
-                <Heading
-                  size={"md"}
-                  style={{ position: "absolute", bottom: 12, right: 12 }}
-                >
-                  Командная
-                </Heading>
-              </Box>
-            </TouchableWithoutFeedback>
-          </HStack>
-          {userDataState.recomendation_info && (
-            <Text textAlign={"center"} color={"gray.500"}>
-              Начальное значение установлено на основе Ваших данных профиля
-            </Text>
-          )}
+          <Heading marginBottom={2}>Дата:</Heading>
+          <Calendar
+            displayLoadingIndicator={isLoading}
+            disableAllTouchEventsForDisabledDays={true}
+            hideExtraDays={true}
+            minDate={new Date()}
+            markedDates={marked}
+            style={{ marginBottom: 15, padding: 10, borderRadius: 12 }}
+            firstDay={1}
+            onDayPress={onDayPress}
+          />
         </Box>
-        <TouchableOpacity
-        //style={{ position: "absolute", bottom: 36, right: PADDING_LR_MAIN }}
-        >
-          <LinearGradient
-            colors={[PRIMARY_GRADIENT.START, PRIMARY_GRADIENT.END]}
-            start={{ x: 1, y: 1 }}
-            end={{ x: 0, y: 0 }}
-            style={{
-              height: 55,
-              borderRadius: 12,
-              alignItems: "center",
-              justifyContent: "center",
-              padding: PADDING_LR_MAIN,
-            }}
-          >
-            <HStack space={2}>
-              <Text color={"white"}>Далее</Text>
-              <Entypo name="chevron-right" size={24} color="white" />
-            </HStack>
-          </LinearGradient>
-        </TouchableOpacity>
       </View>
     </DefaultBackground>
   );

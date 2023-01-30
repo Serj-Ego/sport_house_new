@@ -15,7 +15,6 @@ import { addSportAreaContext } from "../../../../navigation/AdditionalStack";
 export default function SportAreaAddress() {
   const { address } = useContext(addSportAreaContext);
   const navigation = useNavigation();
-  console.log(address);
   return (
     <View justifyContent={"space-around"}>
       <Image

@@ -20,6 +20,7 @@ import SportAreaDetailView from "../../views/SportsArea/SportAreaDetailView";
 import SportAreaStatusHistory from "../../views/SportsArea/SportAreaStatusHistory";
 import LogoutButton from "../components/LogoutButton";
 import InitialUserParams from "../../views/Profile/InitialUserParams";
+import SelectTimeEnroll from "../../views/EnrollLocation/SelectTimeEnroll";
 
 export const addSportAreaContext = createContext();
 
@@ -32,13 +33,55 @@ export default function AdditionalStackNavigator() {
   const [images, setImages] = useState([]);
   const [address, setAddress] = useState({});
   const [workTime, setWorkTime] = useState([
-    { week: "Понедельник", startWork: null, endWork: null },
-    { week: "Вторник", startWork: null, endWork: null },
-    { week: "Среда", startWork: null, endWork: null },
-    { week: "Четверг", startWork: null, endWork: null },
-    { week: "Пятница", startWork: null, endWork: null },
-    { week: "Суббота", startWork: null, endWork: null },
-    { week: "Воскресенье", startWork: null, endWork: null },
+    {
+      week: "Понедельник",
+      startWork: null,
+      endWork: null,
+      interval: null,
+      break: null,
+    },
+    {
+      week: "Вторник",
+      startWork: null,
+      endWork: null,
+      interval: null,
+      break: null,
+    },
+    {
+      week: "Среда",
+      startWork: null,
+      endWork: null,
+      interval: null,
+      break: null,
+    },
+    {
+      week: "Четверг",
+      startWork: null,
+      endWork: null,
+      interval: null,
+      break: null,
+    },
+    {
+      week: "Пятница",
+      startWork: null,
+      endWork: null,
+      interval: null,
+      break: null,
+    },
+    {
+      week: "Суббота",
+      startWork: null,
+      endWork: null,
+      interval: null,
+      break: null,
+    },
+    {
+      week: "Воскресенье",
+      startWork: null,
+      endWork: null,
+      interval: null,
+      break: null,
+    },
   ]);
   const [price, setPrice] = useState(null);
   const [length, setLength] = useState(0);
@@ -244,6 +287,31 @@ export default function AdditionalStackNavigator() {
             presentation: "modal",
             title: MAP_ROUTE.ENROLL.title,
             headerBackTitle: "Отмена",
+            headerTitleStyle: {
+              color:
+                colorScheme === "light"
+                  ? COLORS_LIGHT_THEME.TEXT
+                  : COLORS_DARK_THEME.TEXT,
+            },
+            headerStyle: {
+              backgroundColor:
+                colorScheme === "light"
+                  ? COLORS_LIGHT_THEME.BACKGROUND
+                  : COLORS_DARK_THEME.BACKGROUND,
+            },
+          }}
+        />
+        <Index.Screen
+          name={MAP_ROUTE.ENROLL_TIME.route}
+          component={SelectTimeEnroll}
+          initialParams={{
+            header: MAP_ROUTE.ENROLL_TIME.title,
+          }}
+          options={{
+            headerShown: true,
+            presentation: "modal",
+            title: MAP_ROUTE.ENROLL.title,
+            headerBackTitle: "Назад",
             headerTitleStyle: {
               color:
                 colorScheme === "light"
