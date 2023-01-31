@@ -285,7 +285,7 @@ class Location(models.Model):
         "Доп. код для дополнительного номера", max_length=20, null=True, blank=True
     )
     email = models.EmailField("Электронный адрес площадки")
-    web_site = models.URLField("Веб сайт площадки", blank=True, null=True)
+    web_site = models.CharField("Веб сайт площадки", blank=True, null=True, max_length=10000)
     keywords = models.ManyToManyField(LocationKeyWords, verbose_name="Ключевые слова")
     statuses = models.ManyToManyField(
         Status,
