@@ -28,6 +28,7 @@ from apps.location.api.serializers import (
     BookingListSerializer,
 )
 from apps.location.models import Location, ListLocationStatus, BookingLocation
+from apps.user.utils.notification import send_user_notification
 
 
 class LocationCreateAPIView(CreateAPIView):
@@ -174,7 +175,11 @@ class BookingUserListAPIView(ListAPIView):
         if RoleConst.SPORT_AREA in self.request.user.groups.all().values_list(
             "name", flat=True
         ):
-            return BookingLocation.objects.none()
+            return BookingLocation.objects.filter(
+                id__in=self.request.user.location_set.all().values_list(
+                    "bookings__id", flat=True
+                )
+            )
 
 
 class BookingChangeStatus(APIView):
@@ -182,5 +187,13 @@ class BookingChangeStatus(APIView):
 
     def put(self, request, *args, **kwargs):
         item = BookingLocation.objects.get(id=kwargs.get("pk"))
-        item.add_status(request.user, request.data["status_name"])
+        item.add_status(
+            request.user, request.data["status_name"], request.data["commentary"]
+        )
+        if request.user.id != item.creator.id:
+            send_user_notification(
+                item.creator,
+                "Статус заявки изменен",
+                f"{item.date} ({item.start_event}-{item.end_event})",
+            )
         return Response(BookingListSerializer(item).data, status=status.HTTP_200_OK)

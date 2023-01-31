@@ -569,6 +569,7 @@ class BookingLocationCreateSerializer(serializers.ModelSerializer):
 class BookingListSerializer(serializers.ModelSerializer):
     last_status = serializers.CharField(read_only=True)
     location_name = serializers.SerializerMethodField(read_only=True)
+    last_commentary = serializers.CharField(read_only=True)
 
     def get_location_name(self, obj):
         return obj.location.first().full_name
@@ -582,4 +583,5 @@ class BookingListSerializer(serializers.ModelSerializer):
             "end_event",
             "last_status",
             "location_name",
+            "last_commentary",
         )

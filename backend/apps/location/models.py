@@ -227,6 +227,17 @@ class BookingLocation(models.Model):
         )
 
     @property
+    def last_commentary(self):
+        """Последний комментарий у спортивной площадки"""
+
+        return (
+            ListBookingStatus.objects.filter(booking=self)
+            .order_by("-created_date")
+            .first()
+            .commentary
+        )
+
+    @property
     def location(self):
         return Location.objects.filter(bookings=self)
 
