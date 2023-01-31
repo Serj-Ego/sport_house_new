@@ -7,7 +7,6 @@ import RegistrationButton from "./components/RegistrationButton";
 import LoginButton from "./components/LoginButton";
 import PasswordInput from "./components/PasswordInput";
 import EmailInput from "./components/EmailInput";
-import ResetPasswordButton from "./components/ResetPasswordButton";
 import React, { useEffect, useState } from "react";
 import { Alert } from "react-native";
 import { useDispatch } from "react-redux";
@@ -46,6 +45,7 @@ export default function Form() {
           setLoading(false);
         })
         .catch((err) => {
+          Alert.alert("Ошибка авторизации", err?.non_field_errors[0]);
           console.log(err);
           // Alert.alert(err.non_field_errors[0]);
           setLoading(false);
@@ -78,7 +78,7 @@ export default function Form() {
         <LoginButton onLogin={onLogin} loading={loading} />
         <RegistrationButton />
       </HStack>
-      <ResetPasswordButton />
+      {/*<ResetPasswordButton />*/}
     </View>
   );
 }

@@ -1,6 +1,11 @@
 import DefaultBackground from "../../components/DefaultBackground";
 import { WIDTH } from "../../modules/Theme/dimensions";
-import { ActivityIndicator, Image, KeyboardAvoidingView } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  KeyboardAvoidingView,
+} from "react-native";
 import Email from "./components/Email";
 import Password from "./components/Password";
 import RegButton from "./components/RegButton";
@@ -62,20 +67,24 @@ export default function SignUp({ route }) {
         })
         .catch((err) => {
           console.log(err);
+          Alert.alert("Ошибка", err?.email ? err.email[0] : err);
           setLoading(false);
         });
     } else {
       if (email.length === 0 || !regEmail.test(email)) {
         setEmailError(true);
+        Alert.alert("Ошибка", "Некорректный email");
       } else {
         setEmailError(false);
       }
       if (password.length < 8) {
+        Alert.alert("Ошибка", "Пароль должен содержать минимум 8 символов");
         setPasswordError(true);
       } else {
         setPasswordError(false);
       }
       if (password !== passwordRepeat) {
+        Alert.alert("Ошибка", "Пароли не совпадают");
         setPasswordRepeatError(true);
         setPasswordError(true);
       } else {
