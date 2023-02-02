@@ -1,28 +1,36 @@
 {
   "expo": {
-    "name": "Sport House - Доступный спорт",
-    "slug": "sport_house_3_1",
-    "version": "3.0.1",
+    "name": "My Sport House",
+    "slug": "my_sport_house",
+    "owner": "yungerpeople",
+    "version": "1.0",
     "orientation": "portrait",
     "icon": "./app/assets/icon.png",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./app/assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "updates": {
-      "fallbackToCacheTimeout": 0
+      "backgroundColor": "#ffa160"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
       "supportsTablet": false,
+      "buildNumber": "7",
+      "bundleIdentifier": "ru.mysporthouse.mysporthouse",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "The app accesses your photos to let you share them with your friends.",
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera",
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
+      }
+    },
+    "plugins": [
+      "sentry-expo"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "b2f15052-261e-4364-ad69-2d23572ac9d1"
       }
     }
   }

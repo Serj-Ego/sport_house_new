@@ -16,6 +16,7 @@ export default function Email({ email, emailError, setEmail }) {
       borderRadius={12}
       variant="filled"
       value={email}
+      autoCapitalize="none"
       textAlign={"left"}
       fontWeight={"bold"}
       fontSize={16}

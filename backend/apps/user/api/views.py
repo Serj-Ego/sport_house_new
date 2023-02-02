@@ -1,6 +1,7 @@
 import random
 
 from django.contrib.auth import logout
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -8,8 +9,7 @@ from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from apps.user.tasks import send_email_confirm_code
-from apps.ai.tasks import calculate_recomendation
+
 from apps.base.models import File
 from apps.user.api.serializers import (
     UploadUserAvatarSerializer,
@@ -23,6 +23,7 @@ from apps.user.models import (
     UserReccomendationInfo,
     User,
 )
+from apps.user.tasks import send_email_confirm_code
 
 
 class CustomAuthToken(ObtainAuthToken):
@@ -35,6 +36,8 @@ class CustomAuthToken(ObtainAuthToken):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data["user"]
         token, created = Token.objects.get_or_create(user=user)
+        user.last_login = timezone.now()
+        user.save()
         return Response({"token": token.key, "user_id": user.pk, "email": user.email})
 
 
@@ -99,6 +102,8 @@ class UpdateUserInfoAPIView(APIView):
                 )
             else:
                 user.username = username
+        if notification_token := request.data.get("notification_token", None):
+            user.notification_token = notification_token
         user.save()
 
         return Response(

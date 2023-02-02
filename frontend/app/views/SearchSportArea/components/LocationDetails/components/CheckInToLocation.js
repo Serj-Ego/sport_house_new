@@ -42,7 +42,9 @@ export default function CheckInToLocation({ selectedLocation }) {
         },
       ]}
       onPress={() => {
-        navigation.navigate(MAP_ROUTE.ENROLL.route);
+        navigation.navigate(MAP_ROUTE.ENROLL.route, {
+          areaId: selectedLocation.id,
+        });
       }}
     >
       <Text>Записаться</Text>

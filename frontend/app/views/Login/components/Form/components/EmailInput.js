@@ -18,6 +18,7 @@ export default function EmailInput({ emailError, email, setEmail }) {
       textAlign={"left"}
       fontWeight={"bold"}
       fontSize={16}
+      autoCapitalize="none"
       placeholder={"E-mail..."}
       placeholderTextColor={COLORS_FORM.PLACEHOLDER}
       clearButtonMode="always"

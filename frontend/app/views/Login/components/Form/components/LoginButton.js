@@ -3,11 +3,11 @@ import { PRIMARY_GRADIENT } from "../../../../../modules/Theme/colors";
 import { WIDTH } from "../../../../../modules/Theme/dimensions";
 import { PADDING_LR_MAIN } from "../../../../../modules/Theme/padding";
 import { HStack, Text } from "native-base";
-import { TouchableOpacity } from "react-native";
+import { ActivityIndicator, TouchableOpacity } from "react-native";
 
-export default function LoginButton({ onLogin }) {
+export default function LoginButton({ onLogin, loading }) {
   return (
-    <TouchableOpacity onPress={onLogin}>
+    <TouchableOpacity onPress={onLogin} disabled={loading}>
       <LinearGradient
         colors={[PRIMARY_GRADIENT.START, PRIMARY_GRADIENT.END]}
         start={{ x: 1, y: 1 }}
@@ -22,13 +22,17 @@ export default function LoginButton({ onLogin }) {
         }}
       >
         <HStack space={2}>
-          <Text
-            _light={{ color: "white" }}
-            _dark={{ color: "white" }}
-            fontWeight={"extrabold"}
-          >
-            Войти
-          </Text>
+          {loading ? (
+            <ActivityIndicator />
+          ) : (
+            <Text
+              _light={{ color: "white" }}
+              _dark={{ color: "white" }}
+              fontWeight={"extrabold"}
+            >
+              Войти
+            </Text>
+          )}
         </HStack>
       </LinearGradient>
     </TouchableOpacity>

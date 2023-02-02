@@ -12,7 +12,6 @@ from apps.base.models import (
     LunchEatType,
     DinnerEatType,
 )
-from apps.location.models import Location
 
 
 class User(AbstractUser):
@@ -36,7 +35,7 @@ class User(AbstractUser):
         verbose_name="Пуш-уведомления",
         related_name="user_notifications",
     )
-    my_location = models.ManyToManyField(Location, verbose_name="Мои площадки")
+    # my_location = models.ManyToManyField(Location, verbose_name="Мои площадки")
     confirm_code = models.PositiveIntegerField(
         "Код-подтверждения", null=True, blank=True
     )
@@ -57,6 +56,10 @@ class User(AbstractUser):
         if self.user_notification.filter(is_read=False).count() > 0:
             return True
         return False
+
+    @property
+    def group_names(self) -> set[str]:
+        return set(self.groups.all().values_list("name", flat=True))
 
     class Meta:
         verbose_name = "Пользователь"

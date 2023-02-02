@@ -10,7 +10,7 @@ export default function Settings() {
     <DefaultBackground paddingTop={16}>
       <ScrollView>
         <UserAvatar />
-        <KeyboardAwareScrollView>
+        <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
           <UserSettingsForm />
         </KeyboardAwareScrollView>
       </ScrollView>

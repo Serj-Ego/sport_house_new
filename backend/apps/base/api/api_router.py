@@ -1,10 +1,13 @@
-from django.urls import path, include
-from rest_framework.authtoken import views
+from django.urls import path
 
-# from apps.base.api.views import PreviewTestAPIView
+from apps.base.api.views import LocationDirectoryBase
 
 app_name = "base"
 
 urlpatterns = [
-    # path("api-token-auth/", CustomAuthToken.as_view(), name="test-auth"),
+    path(
+        "directory/<str:type>",
+        LocationDirectoryBase.as_view(),
+        name="directory-base-url",
+    ),
 ]

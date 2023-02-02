@@ -1,4 +1,4 @@
-import { Box, Heading, HStack, Image, Input, Text, View } from "native-base";
+import { Box, Heading, HStack, Image, Text, View } from "native-base";
 import { HEIGHT, WIDTH } from "../../../../modules/Theme/dimensions";
 import React, { useContext } from "react";
 import { PROFILE_ROUTE } from "../../../../modules/NavigationRoutes/profile";
@@ -54,44 +54,66 @@ export default function SportAreaAddress() {
               <Text
                 _light={{ color: COLORS_LIGHT_THEME.TEXT }}
                 _dark={{ color: COLORS_DARK_THEME.TEXT }}
+                fontWeight={"bold"}
               >
-                Указать на карте
+                Указать
               </Text>
             </HStack>
           </Box>
         </TouchableOpacity>
-        <Input
-          isDisabled
-          multiline={true}
-          height={55}
-          value={`${address.country ? address.country : "Страна"}, ${
-            address.administrativeArea
-              ? address.administrativeArea
-              : "Город/Область"
-          }, ${address.name ? address.name : "Улица"}`}
-          marginBottom={4}
-          width={"100%"}
-          borderRadius={12}
-          variant="filled"
-          textAlign={"left"}
-          fontWeight={"bold"}
-          fontSize={16}
-          placeholder={"Город"}
-          placeholderTextColor={COLORS_FORM.PLACEHOLDER}
-          _focus={{
-            borderColor: "rgba(255,255,255,0)",
-          }}
-          paddingLeft={6}
-          paddingRight={6}
+        <Box
+          style={{ padding: 15, borderRadius: 12 }}
           _light={{
             backgroundColor: COLORS_FORM.INPUT,
-            color: COLORS_LIGHT_THEME.TEXT,
+            color: COLORS_DARK_THEME.BACKGROUND,
           }}
           _dark={{
-            color: COLORS_DARK_THEME.TEXT,
+            color: COLORS_DARK_THEME.BACKGROUND,
             backgroundColor: COLORS_FORM.DARK_INPUT,
           }}
-        />
+        >
+          <Text
+            _light={{ color: COLORS_LIGHT_THEME.TEXT }}
+            _dark={{ color: COLORS_DARK_THEME.TEXT }}
+            fontWeight={"bold"}
+            fontSize={18}
+          >
+            {address.thoroughfare} {address.subThoroughfare}, {address.name}
+          </Text>
+        </Box>
+        {/*<Input*/}
+        {/*  isDisabled*/}
+        {/*  multiline={true}*/}
+        {/*  minHeight={55}*/}
+        {/*  value={`${address.country ? address.country : "Страна"}, ${*/}
+        {/*    address.administrativeArea*/}
+        {/*      ? address.administrativeArea*/}
+        {/*      : "Город/Область"*/}
+        {/*  }, ${*/}
+        {/*    address.name*/}
+        {/*      ? `${address.thoroughfare} ${address.subThoroughfare}, ${address.name}`*/}
+        {/*      : "Улица"*/}
+        {/*  }`}*/}
+        {/*  marginBottom={4}*/}
+        {/*  width={"100%"}*/}
+        {/*  borderRadius={12}*/}
+        {/*  variant="filled"*/}
+        {/*  textAlign={"left"}*/}
+        {/*  fontWeight={"bold"}*/}
+        {/*  fontSize={16}*/}
+        {/*  placeholder={"Город"}*/}
+        {/*  placeholderTextColor={COLORS_FORM.PLACEHOLDER}*/}
+        {/*  paddingLeft={6}*/}
+        {/*  paddingRight={6}*/}
+        {/*  _light={{*/}
+        {/*    backgroundColor: COLORS_FORM.INPUT,*/}
+        {/*    color: COLORS_DARK_THEME.BACKGROUND,*/}
+        {/*  }}*/}
+        {/*  _dark={{*/}
+        {/*    color: COLORS_DARK_THEME.BACKGROUND,*/}
+        {/*    backgroundColor: COLORS_FORM.DARK_INPUT,*/}
+        {/*  }}*/}
+        {/*/>*/}
       </View>
     </View>
   );

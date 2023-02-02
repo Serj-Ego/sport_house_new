@@ -21,8 +21,8 @@ export default function SportArea() {
         routeTo={PROFILE_ROUTE.SPORT_AREA_ADD.route}
       />
       <ActionButtonBlock
-        title={PROFILE_ROUTE.SPORT_AREA_ITEMS.title}
-        routeTo={PROFILE_ROUTE.SPORT_AREA_ITEMS.route}
+        title={PROFILE_ROUTE.BOOKING_AREA.title}
+        routeTo={PROFILE_ROUTE.BOOKING_AREA.route}
       />
     </>
   );

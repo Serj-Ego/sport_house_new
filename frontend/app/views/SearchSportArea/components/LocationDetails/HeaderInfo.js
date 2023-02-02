@@ -29,33 +29,28 @@ export default function HeaderInfo({ selectedLocation, refBottom }) {
             },
           ]}
         >
-          {selectedLocation?.name}
+          {selectedLocation?.short_name
+            ? selectedLocation?.short_name
+            : selectedLocation?.full_name}
         </ShowcaseLabel>
         <HStack space={1}>
-          {selectedLocation?.category.map((item, index) => {
-            return (
-              <Text
-                key={item?.id}
-                style={[
-                  styles.address,
-                  {
-                    color:
-                      colorScheme === "light"
-                        ? COLORS_LIGHT_THEME.TEXT
-                        : COLORS_DARK_THEME.TEXT,
-                  },
-                ]}
-              >
-                {item?.name}
-                {index + 1 !== selectedLocation?.category.length && ","}
-              </Text>
-            );
-          })}
+          <Text
+            style={[
+              styles.address,
+              {
+                color:
+                  colorScheme === "light"
+                    ? COLORS_LIGHT_THEME.TEXT
+                    : COLORS_DARK_THEME.TEXT,
+              },
+            ]}
+          >
+            {selectedLocation?.category}
+          </Text>
         </HStack>
       </View>
       <TouchableWithoutFeedback
         onPress={() => {
-          console.log(refBottom);
           refBottom.current.dismiss();
         }}
       >

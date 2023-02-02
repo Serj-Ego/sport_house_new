@@ -5,9 +5,12 @@ export const PROFILE_ROUTE = {
   NOTIFICATION: { route: "notification", title: "Уведомления" },
   SETTINGS: { route: "settings", title: "Настройки" },
 
+  MY_BOOKING: { route: "booking_sportsman", title: "Мои бронирования" },
+  BOOKING_AREA: { route: "booking_area", title: "Бронирования" },
+
   SPORT_AREA_ITEMS: {
     route: "sport_area_items",
-    title: "Мои спортивные площадки",
+    title: "Мои объекты",
   },
   SPORT_AREA_ADD: {
     route: "sport_area_add",
@@ -17,8 +20,13 @@ export const PROFILE_ROUTE = {
     route: "select_sport_area_address",
     title: "Адрес площадки",
   },
-  SPORT_AREA_ZONE_ADD: {
-    route: "add_sport_zone",
-    title: "Добавить зону",
+  SPORT_AREA_CHECK_DATA: {
+    route: "sport_area_check_data",
+    title: "Проверка введенных данных",
+  },
+
+  USER_INIT_PARAMS: {
+    route: "user_initial_params",
+    title: "Ввод начальных данных пользователя",
   },
 };

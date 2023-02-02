@@ -1,68 +1,33 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../../api/api";
-import { Platform } from "react-native";
+import filterSearchParams from "../../../modules/filterSearchParams";
 
 let initialState = {
-  sportAreaTypesList: [],
-  sportAreaSportTypesList: [],
-
   sportAreaOwnerList: [],
   updatedStatusSportArea: {},
   sportAreaUserList: [],
+
+  sportAreaDetailView: {},
+  sportAreaBookingList: [],
 };
-
-/**
- * Получить список типов спортивных площадок.
- */
-export const SportAreaTypesApiRequest = createAsyncThunk(
-  "sportArea/SportAreaTypesApiRequest",
-  async (_, { rejectWithValue }) => {
-    const response = await api.get(`location/category/`);
-    const dataResponse = await response.json();
-    if (!response.ok) {
-      return rejectWithValue(dataResponse);
-    }
-    return dataResponse;
-  }
-);
-
-/**
- * Получить список видов спорта спортивных площадок.
- */
-export const SportAreaSportTypesApiRequest = createAsyncThunk(
-  "sportArea/SportAreaSportTypesApiRequest",
-  async (_, { rejectWithValue }) => {
-    const response = await api.get(`location/sport/type/`);
-    const dataResponse = await response.json();
-    if (!response.ok) {
-      return rejectWithValue(dataResponse);
-    }
-    return dataResponse;
-  }
-);
 
 /**
  * Создание спортивной площадки.
  */
 export const SportAreaCreateApiRequest = createAsyncThunk(
   "sportArea/SportAreaCreateApiRequest",
-  async (data, { rejectWithValue }) => {
-    const img = new FormData();
-    let options = { json: data };
-    if (data.images.length > 1) {
-      data.images.forEach((photo) => {
-        img.append("images", {
-          name: photo.fileName,
-          type: photo.type,
-          uri:
-            Platform.OS === "ios"
-              ? photo.uri.replace("file://", "")
-              : photo.uri,
-        });
+  async ({ data, images }, { rejectWithValue }) => {
+    const fieldsData = new FormData();
+
+    images.forEach((photo) => {
+      fieldsData.append("images", {
+        name: photo.fileName,
+        type: photo.type,
+        uri: photo.uri,
       });
-      img.append("data", JSON.stringify(data));
-      options = { body: img };
-    }
+    });
+    fieldsData.append("data", JSON.stringify(data));
+    const options = { body: fieldsData };
 
     const response = await api.post(`location/create/`, options);
     const dataResponse = await response.json();
@@ -78,24 +43,9 @@ export const SportAreaCreateApiRequest = createAsyncThunk(
  */
 export const SportAreaOwnerListApiRequest = createAsyncThunk(
   "sportArea/SportAreaOwnerListApiRequest",
-  async (_, { rejectWithValue }) => {
-    const response = await api.get(`location/list/view/`);
-    const dataResponse = await response.json();
-    if (!response.ok) {
-      return rejectWithValue(dataResponse);
-    }
-    return dataResponse;
-  }
-);
-
-/**
- * Изменить статус спортивной площадки.
- */
-export const SportAreaChangeStatusApiRequest = createAsyncThunk(
-  "sportArea/SportAreaChangeStatusApiRequest",
-  async ({ id, status }, { rejectWithValue }) => {
-    const response = await api.put(`location/change/status/${id}`, {
-      json: { status: status },
+  async (searchText = null, { rejectWithValue }) => {
+    const response = await api.get(`location/owner/`, {
+      searchParams: { ...filterSearchParams({ search: searchText }) },
     });
     const dataResponse = await response.json();
     if (!response.ok) {
@@ -119,24 +69,125 @@ export const SportAreaUserListApiRequest = createAsyncThunk(
     return dataResponse;
   }
 );
+
+/**
+ * Получить информацию спортивной площадки для создателя.
+ */
+export const SportAreaRetrieveOwnerApiRequest = createAsyncThunk(
+  "sportArea/SportAreaRetrieveOwnerApiRequest",
+  async (id, { rejectWithValue }) => {
+    const response = await api.get(`location/owner/${id}`);
+    const dataResponse = await response.json();
+    if (!response.ok) {
+      return rejectWithValue(dataResponse);
+    }
+    return dataResponse;
+  }
+);
+
+/**
+ * Изменить статус спортивной площадки.
+ */
+export const SportAreaChangeStatusApiRequest = createAsyncThunk(
+  "sportArea/SportAreaRetrieveOwnerApiRequest",
+  async ({ id, status }, { rejectWithValue }) => {
+    const response = await api.put(`location/change/status/${id}`, {
+      json: { status: status },
+    });
+    const dataResponse = await response.json();
+    if (!response.ok) {
+      return rejectWithValue(dataResponse);
+    }
+    return dataResponse;
+  }
+);
+
+/**
+ * Проверить дату для записи.
+ */
+export const SportAreaCheckDateApiRequest = createAsyncThunk(
+  "sportArea/SportAreaCheckDateApiRequest",
+  async (id, { rejectWithValue }) => {
+    const response = await api.get(`location/check/date/${id}`);
+    const dataResponse = await response.json();
+    if (!response.ok) {
+      return rejectWithValue(dataResponse);
+    }
+    return dataResponse;
+  }
+);
+
+/**
+ * Проверить time для записи.
+ */
+export const SportAreaCheckTimeApiRequest = createAsyncThunk(
+  "sportArea/SportAreaCheckTimeApiRequest",
+  async ({ id, day }, { rejectWithValue }) => {
+    const response = await api.get(`location/check/time/${id}`, {
+      searchParams: { day: day },
+    });
+    const dataResponse = await response.json();
+    if (!response.ok) {
+      return rejectWithValue(dataResponse);
+    }
+    return dataResponse;
+  }
+);
+
+/**
+ * Запись на площадку
+ */
+export const SportAreaBookingApiRequest = createAsyncThunk(
+  "sportArea/SportAreaBookingApiRequest",
+  async ({ id, day, start_event }, { rejectWithValue }) => {
+    const response = await api.post(`location/booking/${id}`, {
+      json: { date: day, start_event: start_event },
+    });
+    const dataResponse = await response.json();
+    if (!response.ok) {
+      return rejectWithValue(dataResponse);
+    }
+    return dataResponse;
+  }
+);
+
+/**
+ * список записей на площадку.
+ */
+export const SportAreaBookingListApiRequest = createAsyncThunk(
+  "sportArea/SportAreaBookingListApiRequest",
+  async (_, { rejectWithValue }) => {
+    const response = await api.get(`location/booking/list/`);
+    const dataResponse = await response.json();
+    if (!response.ok) {
+      return rejectWithValue(dataResponse);
+    }
+    return dataResponse;
+  }
+);
+
+/**
+ * изменить статус брони.
+ */
+export const SportAreaBookingChangeStatusApiRequest = createAsyncThunk(
+  "sportArea/SportAreaBookingChangeStatusApiRequest",
+  async ({ id, statusName, commentary }, { rejectWithValue }) => {
+    const response = await api.put(`location/booking/change/status/${id}`, {
+      json: { status_name: statusName, commentary: commentary },
+    });
+    const dataResponse = await response.json();
+    if (!response.ok) {
+      return rejectWithValue(dataResponse);
+    }
+    return dataResponse;
+  }
+);
+
 const baseSlice = createSlice({
   name: "sportArea",
   initialState,
   reducers: {},
   extraReducers: {
-    /**
-     * Получить список типо спортивных площадок.
-     */
-    [SportAreaTypesApiRequest.fulfilled]: (state, action) => {
-      state.sportAreaTypesList = action.payload;
-    },
-    /**
-     * Получить список видов спорта спортивных площадок.
-     */
-    [SportAreaSportTypesApiRequest.fulfilled]: (state, action) => {
-      state.sportAreaSportTypesList = action.payload;
-    },
-
     /**
      * Получить список спортивных площадок у менеджера.
      */
@@ -157,13 +208,23 @@ const baseSlice = createSlice({
     [SportAreaUserListApiRequest.fulfilled]: (state, action) => {
       state.sportAreaUserList = action.payload;
     },
+
+    /**
+     * Получить информацию спортивной площадки для создателя.
+     */
+    [SportAreaRetrieveOwnerApiRequest.fulfilled]: (state, action) => {
+      state.sportAreaDetailView = action.payload;
+    },
+
+    /**
+     * список записей на площадку.
+     */
+    [SportAreaBookingListApiRequest.fulfilled]: (state, action) => {
+      state.sportAreaBookingList = action.payload;
+    },
   },
 });
 export default baseSlice.reducer;
-
-export const sportAreaTypesList = (state) => state.sportArea.sportAreaTypesList;
-export const sportAreaSportTypesList = (state) =>
-  state.sportArea.sportAreaSportTypesList;
 
 export const sportAreaOwnerList = (state) => state.sportArea.sportAreaOwnerList;
 
@@ -171,3 +232,8 @@ export const updatedStatusSportArea = (state) =>
   state.sportArea.updatedStatusSportArea;
 
 export const sportAreaUserList = (state) => state.sportArea.sportAreaUserList;
+export const sportAreaDetailView = (state) =>
+  state.sportArea.sportAreaDetailView;
+
+export const sportAreaBookingList = (state) =>
+  state.sportArea.sportAreaBookingList;

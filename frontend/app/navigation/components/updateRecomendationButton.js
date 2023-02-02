@@ -26,7 +26,7 @@ export default function UpdateRecomendationButton() {
             "Расчет успешно запущен",
             "Ожидайте уведомления для просмотра расчета"
           );
-          navigation.goBack();
+          navigation.pop(1);
         })
         .catch((err) => {
           setLoading(false);
@@ -40,7 +40,7 @@ export default function UpdateRecomendationButton() {
   return loading ? (
     <ActivityIndicator style={{ alignSelf: "center" }} />
   ) : (
-    <TouchableOpacity style={{ width: "100%" }} onPress={onPress}>
+    <TouchableOpacity onPress={onPress}>
       <Icon
         as={MaterialIcons}
         size={7}

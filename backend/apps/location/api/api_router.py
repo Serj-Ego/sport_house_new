@@ -1,30 +1,49 @@
-from django.urls import path, include
-from rest_framework.authtoken import views
+from django.urls import path
 
-# from apps.base.api.views import PreviewTestAPIView
 from apps.location.api.views import (
-    LocationSportTypeListAPIView,
-    LocationCategoryListAPIView,
     LocationCreateAPIView,
-    LocationListAPIView,
-    LocationForUserListAPIView,
+    LocationOwnerListAPIVIew,
+    LocationOwnerChangeStatusUpdateAPIView,
+    LocationOwnerRetrieveAPIView,
+    LocationUserMapListAPIView,
+    LocationCheckCalendarDate,
+    LocationCheckTimeEnroll,
+    BookingLocationCreateAPIView,
+    BookingUserListAPIView,
+    BookingChangeStatus,
 )
 
 app_name = "location"
 
 urlpatterns = [
-    path("category/", LocationCategoryListAPIView.as_view(), name="location-category"),
-    path("sport/type/", LocationSportTypeListAPIView.as_view(), name="sport-types"),
     path("create/", LocationCreateAPIView.as_view(), name="location-create"),
-    path("list/view/", LocationListAPIView.as_view(), name="location-list-view"),
+    path("owner/", LocationOwnerListAPIVIew.as_view(), name="location-owner"),
     path(
         "change/status/<int:pk>",
-        LocationListAPIView.as_view(),
-        name="location-sent-review",
+        LocationOwnerChangeStatusUpdateAPIView.as_view(),
+        name="location-change-status",
+    ),
+    path(
+        "owner/<int:pk>",
+        LocationOwnerRetrieveAPIView.as_view(),
+        name="location-owner-retrieve",
     ),
     path(
         "list/user/view/",
-        LocationForUserListAPIView.as_view(),
+        LocationUserMapListAPIView.as_view(),
         name="location-list-user-view",
+    ),
+    path("check/date/<int:pk>", LocationCheckCalendarDate.as_view(), name="check-date"),
+    path("check/time/<int:pk>", LocationCheckTimeEnroll.as_view(), name="check-time"),
+    path(
+        "booking/<int:pk>",
+        BookingLocationCreateAPIView.as_view(),
+        name="booking-location",
+    ),
+    path("booking/list/", BookingUserListAPIView.as_view(), name="booking-list"),
+    path(
+        "booking/change/status/<int:pk>",
+        BookingChangeStatus.as_view(),
+        name="booking-change-status",
     ),
 ]

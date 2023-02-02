@@ -3,7 +3,7 @@ import random
 from django.contrib.auth.models import Group
 from rest_framework import serializers
 
-from apps.base.models import File, FileType, FileTypeConst, PhysicalTraining, RoleConst
+from apps.base.models import File, FileType, FileTypeConst, PhysicalTraining
 from apps.user.models import (
     User,
     UserReccomendationInfo,
@@ -26,7 +26,9 @@ class UserInfoSerializer(serializers.ModelSerializer):
 
     def get_role(self, obj):
         group = obj.groups.all().first()
-        return group.name
+        if group:
+            return group.name
+        return None
 
     def get_recomendation_info(self, obj):
         try:
@@ -179,8 +181,6 @@ class RegistrationUserSerializer(serializers.ModelSerializer):
             username=validated_data.get("email"),
             email=validated_data.get("email"),
             password=validated_data.get("password"),
-            last_name=validated_data.get("last_name"),
-            first_name=validated_data.get("first_name"),
             is_active=False,
             confirm_code=code,
         )
@@ -193,8 +193,6 @@ class RegistrationUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-            "first_name",
-            "last_name",
             "email",
             "password",
             "confirm_code",

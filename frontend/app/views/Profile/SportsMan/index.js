@@ -30,6 +30,10 @@ export default function SportsMan() {
         title={PROFILE_ROUTE.RECOMMENDATION.title}
         routeTo={PROFILE_ROUTE.RECOMMENDATION.route}
       />
+      <ActionButtonBlock
+        title={PROFILE_ROUTE.MY_BOOKING.title}
+        routeTo={PROFILE_ROUTE.MY_BOOKING.route}
+      />
     </>
   );
 }

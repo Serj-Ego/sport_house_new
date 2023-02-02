@@ -61,10 +61,10 @@ export default function MoreInfoLocation({ selectedLocation }) {
           fontSize={"md"}
           color={"blue.500"}
           onPress={() => {
-            Linking.openURL(`https://example.ru`);
+            Linking.openURL(`${selectedLocation?.web_site}`);
           }}
         >
-          https://example.ru
+          {selectedLocation?.web_site}
         </Text>
         <Divider mt={3} mb={2} />
         <Text fontSize={"md"} color={"gray.300"}>

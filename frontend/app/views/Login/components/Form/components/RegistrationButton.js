@@ -11,7 +11,7 @@ export default function RegistrationButton() {
   return (
     <TouchableOpacity
       onPress={() => {
-        navigation.navigate(MAIN_ROUTES.SIGNUP);
+        navigation.navigate(MAIN_ROUTES.SET_ROLE);
       }}
     >
       <Box
